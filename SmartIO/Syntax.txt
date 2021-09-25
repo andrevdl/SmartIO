@@ -1,0 +1,19 @@
+// Single line comments
+/*
+	multi line comments
+*/
+
+if
+else
+
+add
+
+.
+,
+:
+::
+;
+(
+)
+
+/
