@@ -41,7 +41,7 @@ bool SIOTokenizer::parse(string& error)
 			{
 				if (is_token_end())
 				{
-					return push_token({ SIOTokenType::IO_ADD, 0 });
+					return PUSH_TOKEN(SIOTokenType::IO_ADD);
 				}
 			}
 		}
@@ -57,7 +57,7 @@ bool SIOTokenizer::parse(string& error)
 				c = get_and_move_char();
 				if (c == 'e')
 				{
-					return push_token({ SIOTokenType::ELSE, 0 });
+					return PUSH_TOKEN(SIOTokenType::ELSE);
 				}
 			}
 		}
@@ -69,7 +69,7 @@ bool SIOTokenizer::parse(string& error)
 		{
 			if (is_token_end())
 			{
-				return push_token({ SIOTokenType::IF, 0 });
+				return PUSH_TOKEN(SIOTokenType::IF);
 			}
 		}
 	}
@@ -83,55 +83,55 @@ bool SIOTokenizer::parse(string& error)
 			{
 				if (is_token_end())
 				{
-					return push_token({ SIOTokenType::VAR, 0 });
+					return PUSH_TOKEN(SIOTokenType::VAR);
 				}
 			}
 		}
 	}
 	else if (c == '.')
 	{
-		return push_token({ SIOTokenType::DOT, 0 });
+		return PUSH_TOKEN(SIOTokenType::DOT);
 	}
 	else if (c == ',')
 	{
-		return push_token({ SIOTokenType::COMMA, 0 });
+		return PUSH_TOKEN(SIOTokenType::COMMA);
 	}
 	else if (c == ':')
 	{
 		if (get_char() == ':')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::DCOLON, 0 });
+			return PUSH_TOKEN(SIOTokenType::DCOLON);
 		}
-		return push_token({ SIOTokenType::COLON, 0 });
+		return PUSH_TOKEN(SIOTokenType::COLON);
 	}
 	else if (c == ';')
 	{
-		return push_token({ SIOTokenType::SEMICOLON, 0 });
+		return PUSH_TOKEN(SIOTokenType::SEMICOLON);
 	}
 	else if (c == '(')
 	{
-		return push_token({ SIOTokenType::LPAR, 0 });
+		return PUSH_TOKEN(SIOTokenType::LPAR);
 	}
 	else if (c == ')')
 	{
-		return push_token({ SIOTokenType::RPAR, 0 }); 
+		return PUSH_TOKEN(SIOTokenType::RPAR);
 	} 
 	else if (c == '[')
 	{
-		return push_token({ SIOTokenType::LBR, 0 });
+		return PUSH_TOKEN(SIOTokenType::LBR);
 	}
 	else if (c == ']')
 	{
-		return push_token({ SIOTokenType::RBR, 0 });
+		return PUSH_TOKEN(SIOTokenType::RBR);
 	}
 	else if (c == '{')
 	{
-		return push_token({ SIOTokenType::LCURL, 0 });
+		return PUSH_TOKEN(SIOTokenType::LCURL);
 	}
 	else if (c == '}')
 	{
-		return push_token({ SIOTokenType::RCURL, 0 });
+		return PUSH_TOKEN(SIOTokenType::RCURL);
 	}
 	else if (c == '<')
 	{	
@@ -139,42 +139,42 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '>')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::LOGIC_UNEQUAL, 0 });
+			return PUSH_TOKEN(SIOTokenType::LOGIC_UNEQUAL);
 		}
 		else if (c == '=')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::LOGIC_SMALLER_EQUAL, 0 });
+			return PUSH_TOKEN(SIOTokenType::LOGIC_SMALLER_EQUAL);
 		}
-		return push_token({ SIOTokenType::SMALLER, 0 });
+		return PUSH_TOKEN(SIOTokenType::SMALLER);
 	}
 	else if (c == '>')
 	{
 		if (get_char() == '=')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::LOGIC_GREATER_EQUAL, 0 });
+			return PUSH_TOKEN(SIOTokenType::LOGIC_GREATER_EQUAL);
 		}
-		return push_token({ SIOTokenType::LARGER, 0 });
+		return PUSH_TOKEN(SIOTokenType::LARGER);
 	}
 	else if (c == '$')
 	{
-		return push_token({ SIOTokenType::DOLLAR, 0 });
+		return PUSH_TOKEN(SIOTokenType::DOLLAR);
 	}
 	else if (c == '\\')
 	{
-		return push_token({ SIOTokenType::BSLASH, 0 });
+		return PUSH_TOKEN(SIOTokenType::BSLASH);
 	}
 	else if (c == '#')
 	{
-		return push_token({ SIOTokenType::HASH, 0 });
+		return PUSH_TOKEN(SIOTokenType::HASH);
 	}
 	else if (c == '&')
 	{
 		c = get_and_move_char();
 		if (c == '&')
 		{
-			return push_token({ SIOTokenType::AND, 0 });
+			return PUSH_TOKEN(SIOTokenType::AND);
 		}
 
 		return false;
@@ -184,32 +184,32 @@ bool SIOTokenizer::parse(string& error)
 		c = get_and_move_char();
 		if (c == '|')
 		{
-			return push_token({ SIOTokenType::OR, 0 });
+			return PUSH_TOKEN(SIOTokenType::OR);
 		}
 
 		return false;
 	}
 	else if (c == '%')
 	{
-		return push_token({ SIOTokenType::MODULO, 0 });
+		return PUSH_TOKEN(SIOTokenType::MODULO);
 	}
 	else if (c == '!')
 	{
 		if (get_char() == '=')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::LOGIC_UNEQUAL, 0 });
+			return PUSH_TOKEN(SIOTokenType::LOGIC_UNEQUAL);
 		}
-		return push_token({ SIOTokenType::NOT, 0 });
+		return PUSH_TOKEN(SIOTokenType::NOT);
 	}
 	else if (c == '=')
 	{
 		if (get_char() == '=')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::LOGIC_EQUAL, 0 });
+			return PUSH_TOKEN(SIOTokenType::LOGIC_EQUAL);
 		}
-		return push_token({ SIOTokenType::ASSIGN, 0 });
+		return PUSH_TOKEN(SIOTokenType::ASSIGN);
 	}
 	else if (c == '+')
 	{
@@ -217,14 +217,14 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '=')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::ASSIGN_ADD, 0 });
+			return PUSH_TOKEN(SIOTokenType::ASSIGN_ADD);
 		}
 		else if (c == '+')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::INC, 0 });
+			return PUSH_TOKEN(SIOTokenType::INC);
 		}
-		return push_token({ SIOTokenType::ADD, 0 });
+		return PUSH_TOKEN(SIOTokenType::ADD);
 	}
 	else if (c == '-')
 	{
@@ -232,23 +232,23 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '=')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::ASSIGN_MIN, 0 });
+			return PUSH_TOKEN(SIOTokenType::ASSIGN_MIN);
 		}
 		else if (c == '-')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::DEC, 0 });
+			return PUSH_TOKEN(SIOTokenType::DEC);
 		}
-		return push_token({ SIOTokenType::MIN, 0 });
+		return PUSH_TOKEN(SIOTokenType::MIN);
 	}
 	else if (c == '*')
 	{
 		if (get_char() == '=')
 		{
 			skip_char();
-			return push_token({ SIOTokenType::ASSIGN_STAR, 0 });
+			return PUSH_TOKEN(SIOTokenType::ASSIGN_STAR);
 		}
-		return push_token({ SIOTokenType::STAR, 0 });
+		return PUSH_TOKEN(SIOTokenType::STAR);
 	}
 	else if (c == '/')
 	{
@@ -287,10 +287,9 @@ bool SIOTokenizer::parse(string& error)
 		}
 		else if (c == '=') {
 			skip_char();
-			return push_token({ SIOTokenType::ASSIGN_SLASH, 0 });
+			return PUSH_TOKEN(SIOTokenType::ASSIGN_SLASH);
 		}
-
-		return push_token({ SIOTokenType::SLASH, 0 });
+		return PUSH_TOKEN(SIOTokenType::SLASH);
 	}
 	else if (c == '"')
 	{
@@ -307,7 +306,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '"')
 		{
 			rollback();
-			return push_token({ SIOTokenType::DSTRING, 1 }); // TODO: implement string table
+			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, 1); // TODO: implement string table
 		}
 		
 		return false;
@@ -327,7 +326,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '\'')
 		{
 			rollback();
-			return push_token({ SIOTokenType::SSTRING, 1 }); // TODO: implement string table
+			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, 1); // TODO: implement string table
 		}
 
 		return false;
@@ -346,7 +345,12 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 			c = get_and_move_char();
 		}
 
-		if (ispunct(c) || isspace(c))
+		if (ispunct(c))
+		{
+			SIOStream::rollback();
+			rollback();
+		}
+		else if (isspace(c))
 		{
 			rollback();
 		}
@@ -358,8 +362,8 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 		errno = 0;
 		char* end = 0;
 
-		uint64 val = strtoll(get_buffer(), &end, 10);
-		return errno == 0 && *end == 0 && push_token({ SIOTokenType::VALUE, val });
+		uint64_t val = strtoll(get_buffer(), &end, 10);
+		return errno == 0 && *end == 0 && PUSH_TOKEN_VAL(SIOTokenType::VALUE, val);
 	}
 	else if (isalpha(c))
 	{
@@ -369,7 +373,12 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 			c = get_and_move_char();
 		}
 
-		if (ispunct(c) || isspace(c))
+		if (ispunct(c))
+		{
+			SIOStream::rollback();
+			rollback();
+		}
+		else if (isspace(c))
 		{
 			rollback();
 		}
@@ -378,13 +387,13 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 			return false;
 		}
 
-		return push_token({ SIOTokenType::IDENTIFIER, 1 }); // TODO: implement string table
+		return PUSH_TOKEN_VAL(SIOTokenType::VALUE, 1); // TODO: implement string table
 	}
 
 	return false;
 }
 
-bool SIOTokenizer::push_token(SIOToken token)
+bool SIOTokenizer::push_token(SIOToken* token)
 {
 	tokens.push_back(token);
 
@@ -426,11 +435,21 @@ bool SIOTokenizer::tokenize(string& error)
 	return state;
 }
 
+vector<SIOToken*>::iterator SIOTokenizer::begin()
+{
+	return tokens.begin();
+}
+
+vector<SIOToken*>::iterator SIOTokenizer::end()
+{
+	return tokens.end();
+}
+
 ostream& operator<<(ostream& os, const SIOTokenizer& tokenizer)
 {
-	for each (SIOToken token in tokenizer.tokens)
+	for each (SIOToken* token in tokenizer.tokens)
 	{
-		os << "type:\t" << int(token.type) << "\tvalue: " << token.value << endl;
+		os << "type:\t" << int(token->type) << "\tvalue: " << token->value << endl;
 	}
 
 	return os;

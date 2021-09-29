@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "SIOTokens.h"
+
 using namespace std;
 
-typedef unsigned __int64 uint64;
+#define	RET_DELETE_AND_NULL(v) delete v; return nullptr;

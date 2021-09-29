@@ -2,14 +2,23 @@
 
 enum class SIOTokenType
 {
+	// Parser flow
+	EMPTY,	
+	NESTED,
+	SYMBOL,
+
+	// Symbol types
 	IDENTIFIER,
 	VALUE,
 	DSTRING, // double qouted string
 	SSTRING, // single qouted string
 
+	// Keywords
 	IF,
 	ELSE,
 	VAR,
+
+	// true, false, null
 
 	// update
 	// block
@@ -22,8 +31,10 @@ enum class SIOTokenType
 	// import, use
 	// define -> datasource/io
 
+	// IO
 	IO_ADD,
 
+	// Signs
 	DOT,
 	COMMA,
 	COLON,
@@ -72,5 +83,5 @@ enum class SIOTokenType
 struct SIOToken
 {
 	SIOTokenType type;
-	uint64 value;
+	uint64_t value;
 };

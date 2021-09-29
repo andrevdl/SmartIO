@@ -52,7 +52,7 @@ bool SIOStream::done()
 bool SIOStream::is_token_end()
 {
 	char c = get_char();
-	return c == ':' || is_empty(c) || c == 0;
+	return c == ':' || is_empty(c) || c == 0 || ispunct(c);
 }
 
 bool SIOStream::is_empty(char c)
