@@ -2,7 +2,8 @@
 
 bool SIONProgram::parse(SIOTokenWalker& walker)
 {
-	SIONExpr* expr = nullptr;//new SIONExpr(parent);
+	//SIONExpr* expr = nullptr;
+	SIONLogicExpr* expr = nullptr;
 
 	bool state = parse_node(walker, expr);
 	base = expr;

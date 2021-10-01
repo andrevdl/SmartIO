@@ -1,0 +1,62 @@
+Defiintion file for all grammars
+
+{...} => special result => empty, vector
+<...> => keyword, symbol
+
+============= Logic expression =============
+
+Goal           -> LogicExpr
+
+LogicExpr      -> LogicExprUnit LogicExpr'
+LogicExpr'     -> <&&> LogicExprUnit LogicExpr' LogicExpr' | <||> LogicExprUnit LogicExpr' LogicExpr' | {empty}
+
+LogicExprUnit  -> <!> LogicExprUnit' | LogicExprUnit'
+LogicExprUnit' -> <(> LogicExpr <)> CompareExpr' | CompareExpr
+
+CompareExpr    -> LogicExprExpr CompareExpr'
+CompareExpr'   -> <==> LogicExprExpr | <<>> LogicExprExpr | {empty}
+
+LogicExprExpr  -> <(> CompareExpr <)> | LogicExprExpr'
+LogicExprExpr' -> <!> Expr | Expr
+
+============= Math expression =============
+
+Goal   -> Expr
+
+Expr   -> Term Expr'
+Expr'   -> <+> Term Expr' | <-> Term Expr' | {empty}
+Term   -> Factor Term'
+Term'  -> <*> Factor Term' | <%> Factor Term' | {empty}
+
+Factor -> <(> Expr <)> | {num} | {name}
+
+============= Indentifier =============
+
+Goal   -> Id
+
+Id    -> Symbol Id'
+Id'   -> {vector}Expr Arr Chain | {empty}
+Arr   -> {vector}Expr Arr Chain | {empty}
+Chain -> Id Chain | {empty}
+
+============= Statement =============
+
+Stmt = If | ...
+
+============= Statement - If =============
+
+Goal   -> If
+If     -> <if> Expr <{> {vector}Stmt <}> If'
+If'    -> <else> If | <else> Else | {empty}
+Else   -> <{> {vector}Stmt <}>
+
+============= Statement - Define =============
+Auto auto; => TODO
+
+============= Statement - Assign =============
+Auto auto = 2 => TODO
+auto = 2 => TODO
+
+============= Statement - While =============
+============= Statement - Do while =============
+============= Statement - Func call =============

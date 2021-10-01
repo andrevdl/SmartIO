@@ -33,7 +33,6 @@ private:
 	static bool create_expr_min(SIOTokenWalker& walker, SIONExpr2* node);
 protected:
 	virtual void print_dot_graph_body(ostream& os) const;	
-
 public:
 	SIONExpr2(SIONonTerminalNode* parent) : SIONonTerminalNode(parent) {}
 
@@ -164,11 +163,3 @@ inline bool SIONExprFactor::get_handler(function<bool(SIOTokenWalker&, T*)>& han
 	}
 }
 
-// Goal   -> Expr
-
-// Expr   -> Term Expr`
-// Expr`  -> + Term Expr` | - Term Expr` | e {empty}
-// Term   -> Factor Term`
-// Term`  -> x Factor Term` | % Factor Term` | e {empty}
-
-// Factor -> ( Expr ) | num | name

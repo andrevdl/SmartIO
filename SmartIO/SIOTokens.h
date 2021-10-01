@@ -114,3 +114,16 @@ inline const char* token_type_str(const SIOTokenType& type)
 		return "";
 	}
 }
+
+inline const bool is_comp_op(const SIOTokenType& type)
+{
+	return type == SIOTokenType::LOGIC_EQUAL ||
+		type == SIOTokenType::LOGIC_UNEQUAL ||
+		type == SIOTokenType::LOGIC_GREATER_EQUAL ||
+		type == SIOTokenType::LOGIC_SMALLER_EQUAL;
+}
+
+inline const bool is_logic_op(const SIOTokenType& type)
+{
+	return type == SIOTokenType::AND || type == SIOTokenType::OR;
+}

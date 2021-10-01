@@ -25,62 +25,51 @@ void SIOTokenizer::flush_str_cache()
 
 bool SIOTokenizer::parse(string& error)
 {
+	bookmark();
 	char c = get_and_move_char();
+	bool trap = false;
 
 	if (isspace(c))
 	{
 		return true;
 	} 
-	else if (c == 'a')
+	else if (compare_and_trap(c, 'a', trap))
 	{
 		c = get_and_move_char();
-		if (c == 'd')
+		if (compare_and_trap(c, 'd', trap))
 		{
 			c = get_and_move_char();
-			if (c == 'd')
+			if (compare_and_trap(c, 'd', trap))
 			{
 				if (is_token_end())
 				{
 					return PUSH_TOKEN(SIOTokenType::IO_ADD);
 				}
 			}
-
-			c = rollback_and_get_char(2);
-			return parse_non_keyword(c, error);
 		}
-
-		c = rollback_and_get_char(2 /*temp, should be 1 (is default, empty param)*/);
-		return parse_non_keyword(c, error);
 	}
-	else if (c == 'e')
+	else if (compare_and_trap(c, 'e', trap))
 	{
 		c = get_and_move_char();
-		if (c == 'l')
+		if (compare_and_trap(c, 'l', trap))
 		{
 			c = get_and_move_char();
-			if (c == 's')
+			if (compare_and_trap(c, 's', trap))
 			{
 				c = get_and_move_char();
-				if (c == 'e')
+				if (compare_and_trap(c, 'e', trap))
 				{
 					return PUSH_TOKEN(SIOTokenType::ELSE);
 				}
-
-				c = rollback_and_get_char(3);
-				return parse_non_keyword(c, error);
 			}
-
-			c = rollback_and_get_char(2);
-			return parse_non_keyword(c, error);
 		}
 
-		c = rollback_and_get_char();
-		return parse_non_keyword(c, error);
+		trap = true;
 	}
-	else if (c == 'i')
+	else if (compare_and_trap(c, 'i', trap))
 	{
 		c = get_and_move_char();
-		if (c == 'f')
+		if (compare_and_trap(c, 'f', trap))
 		{
 			if (is_token_end())
 			{
@@ -88,29 +77,24 @@ bool SIOTokenizer::parse(string& error)
 			}
 		}
 
-		c = rollback_and_get_char();
-		return parse_non_keyword(c, error);
+		trap = true;
 	}
-	else if (c == 'v')
+	else if (compare_and_trap(c, 'v', trap))
 	{
 		c = get_and_move_char();
-		if (c == 'a')
+		if (compare_and_trap(c, 'a', trap))
 		{
 			c = get_and_move_char();
-			if (c == 'r')
+			if (compare_and_trap(c, 'r', trap))
 			{
 				if (is_token_end())
 				{
 					return PUSH_TOKEN(SIOTokenType::VAR);
 				}
 			}
-
-			c = rollback_and_get_char(2);
-			return parse_non_keyword(c, error);
 		}
 
-		c = rollback_and_get_char();
-		return parse_non_keyword(c, error);
+		trap = true;
 	}
 	else if (c == '.')
 	{
@@ -354,6 +338,12 @@ bool SIOTokenizer::parse(string& error)
 		}
 
 		return false;
+	}
+
+	if (trap)
+	{
+		restore_bookmark();
+		c = get_and_move_char();
 	}
 
 	return parse_non_keyword(c, error);
