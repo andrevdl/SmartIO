@@ -6,6 +6,8 @@ enum class SIOTokenType
 	EMPTY,	
 	NESTED,
 	SYMBOL,
+	CALL,
+	ARRAY,
 
 	// Symbol types
 	IDENTIFIER,
@@ -85,3 +87,30 @@ struct SIOToken
 	SIOTokenType type;
 	uint64_t value;
 };
+
+inline const char* token_type_str(const SIOTokenType& type)
+{
+	switch (type)
+	{
+	case SIOTokenType::EMPTY:
+		return "empty";
+	case SIOTokenType::NESTED:
+		return "nested";
+	case SIOTokenType::SYMBOL:
+		return "symbol";
+	case SIOTokenType::CALL:
+		return "function";
+	case SIOTokenType::ARRAY:
+		return "array";
+	case SIOTokenType::IDENTIFIER:
+		return "identifier";
+	case SIOTokenType::VALUE:
+		return "value";
+	case SIOTokenType::DSTRING:
+		return "dstring";
+	case SIOTokenType::SSTRING:
+		return "sstring";
+	default:
+		return "";
+	}
+}

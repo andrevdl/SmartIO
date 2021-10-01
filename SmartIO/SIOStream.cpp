@@ -24,24 +24,21 @@ char SIOStream::get_and_move_char()
 	return my_str[my_str_index++];
 }
 
-char SIOStream::peek_char()
+bool SIOStream::skip_char(int i)
 {
-	if (my_str_index + 1 >= my_str.length())
-	{
-		return 0;
-	}
-	return my_str[my_str_index + 1];
+	my_str_index += i;
+	return my_str_index < my_str.length();
 }
 
-
-bool SIOStream::skip_char()
+char SIOStream::rollback_and_get_char(int i)
 {
-	return ++my_str_index < my_str.length();
+	return rollback(i) ? get_char() : 0;
 }
 
-bool SIOStream::rollback()
+bool SIOStream::rollback(int i)
 {
-	return --my_str_index >= 0;
+	my_str_index -= i;
+	return i >= 0;
 }
 
 bool SIOStream::done()
@@ -52,15 +49,5 @@ bool SIOStream::done()
 bool SIOStream::is_token_end()
 {
 	char c = get_char();
-	return c == ':' || is_empty(c) || c == 0 || ispunct(c);
-}
-
-bool SIOStream::is_empty(char c)
-{
-	return c == ' ' || c == '\n' || c == '\r' || c == '\t';
-}
-
-bool SIOStream::next_is_empty()
-{
-	return is_empty(peek_char());
+	return iscntrl(c) || isspace(c) || ispunct(c);
 }

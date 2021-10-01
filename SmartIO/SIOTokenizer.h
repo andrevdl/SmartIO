@@ -21,8 +21,8 @@ private:
 	vector<SIOToken*> tokens;
 
 	const char cache_char(const char c);
-	const char* get_buffer();
-	void flush_cache();
+	const char* get_str_buffer();
+	void flush_str_cache();
 
 	bool parse(string& error);
 	bool parse_non_keyword(char c, string& error);
@@ -30,7 +30,8 @@ private:
 	bool push_token(SIOToken* token);
 protected:
 	char get_and_move_char();
-	bool rollback();
+	bool rollback(int i = 1);
+	bool rollback_str_buffer(int i = 1);
 public:
 	SIOTokenizer(string file);
 	~SIOTokenizer();

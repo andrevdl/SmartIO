@@ -11,7 +11,8 @@ using namespace std;
 
 int main()
 {
-	string text = "2 / (5 - 4) - 7";
+	string text = "2 / (5 - 4) - x(y[n][r] + j(o)[u], z + p + q().m)";
+	//string text = "x(y[n][r])"; // parse error
 	SIOTokenizer tokenizer(text);
 
 	string err = "";

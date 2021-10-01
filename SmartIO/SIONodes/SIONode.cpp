@@ -44,15 +44,14 @@ void SIONonTerminalNode::after_print_dot_graph(ostream& os) const
 	}
 }
 
-bool SIONonTerminalNode::accept(SIOTokenType type)
+void SIONonTerminalNode::print_dot_graph_body(ostream& os) const
 {
-	return false;
+	os << token_type_str(type);
 }
 
-bool SIONonTerminalNode::accept(SIOTokenWalker& walker, bool& empty)
+const SIOTokenType SIONonTerminalNode::get_type() const
 {
-	empty = walker.eof();
-	return accept(empty ? SIOTokenType::EMPTY : walker.peek()->type);
+	return type;
 }
 
 SIONonTerminalNode::SIONonTerminalNode(SIONonTerminalNode* parent) : SIOBaseNode(parent)

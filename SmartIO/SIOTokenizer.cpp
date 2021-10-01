@@ -11,14 +11,14 @@ const char SIOTokenizer::cache_char(const char c)
 	return c;
 }
 
-const char* SIOTokenizer::get_buffer()
+const char* SIOTokenizer::get_str_buffer()
 {
 	// Terminate string
 	str_buffer[str_buffer_i] = 0;
 	return str_buffer;
 }
 
-void SIOTokenizer::flush_cache()
+void SIOTokenizer::flush_str_cache()
 {
 	str_buffer_i = 0;
 }
@@ -27,7 +27,7 @@ bool SIOTokenizer::parse(string& error)
 {
 	char c = get_and_move_char();
 
-	if (is_empty(c))
+	if (isspace(c))
 	{
 		return true;
 	} 
@@ -44,7 +44,13 @@ bool SIOTokenizer::parse(string& error)
 					return PUSH_TOKEN(SIOTokenType::IO_ADD);
 				}
 			}
+
+			c = rollback_and_get_char(2);
+			return parse_non_keyword(c, error);
 		}
+
+		c = rollback_and_get_char(2 /*temp, should be 1 (is default, empty param)*/);
+		return parse_non_keyword(c, error);
 	}
 	else if (c == 'e')
 	{
@@ -59,8 +65,17 @@ bool SIOTokenizer::parse(string& error)
 				{
 					return PUSH_TOKEN(SIOTokenType::ELSE);
 				}
+
+				c = rollback_and_get_char(3);
+				return parse_non_keyword(c, error);
 			}
+
+			c = rollback_and_get_char(2);
+			return parse_non_keyword(c, error);
 		}
+
+		c = rollback_and_get_char();
+		return parse_non_keyword(c, error);
 	}
 	else if (c == 'i')
 	{
@@ -72,6 +87,9 @@ bool SIOTokenizer::parse(string& error)
 				return PUSH_TOKEN(SIOTokenType::IF);
 			}
 		}
+
+		c = rollback_and_get_char();
+		return parse_non_keyword(c, error);
 	}
 	else if (c == 'v')
 	{
@@ -86,7 +104,13 @@ bool SIOTokenizer::parse(string& error)
 					return PUSH_TOKEN(SIOTokenType::VAR);
 				}
 			}
+
+			c = rollback_and_get_char(2);
+			return parse_non_keyword(c, error);
 		}
+
+		c = rollback_and_get_char();
+		return parse_non_keyword(c, error);
 	}
 	else if (c == '.')
 	{
@@ -293,7 +317,7 @@ bool SIOTokenizer::parse(string& error)
 	}
 	else if (c == '"')
 	{
-		flush_cache();
+		flush_str_cache();
 
 		char p = 0;
 		c = get_and_move_char();
@@ -305,7 +329,7 @@ bool SIOTokenizer::parse(string& error)
 
 		if (c == '"')
 		{
-			rollback();
+			rollback_str_buffer();
 			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, 1); // TODO: implement string table
 		}
 		
@@ -313,7 +337,7 @@ bool SIOTokenizer::parse(string& error)
 	}
 	else if (c == '\'')
 	{
-		flush_cache();
+		flush_str_cache();
 
 		char p = 0;
 		c = get_and_move_char();
@@ -325,7 +349,7 @@ bool SIOTokenizer::parse(string& error)
 
 		if (c == '\'')
 		{
-			rollback();
+			rollback_str_buffer();
 			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, 1); // TODO: implement string table
 		}
 
@@ -347,12 +371,11 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 
 		if (ispunct(c))
 		{
-			SIOStream::rollback();
 			rollback();
 		}
 		else if (isspace(c))
 		{
-			rollback();
+			rollback_str_buffer();
 		}
 		else if (c != 0)
 		{
@@ -362,7 +385,7 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 		errno = 0;
 		char* end = 0;
 
-		uint64_t val = strtoll(get_buffer(), &end, 10);
+		uint64_t val = strtoll(get_str_buffer(), &end, 10);
 		return errno == 0 && *end == 0 && PUSH_TOKEN_VAL(SIOTokenType::VALUE, val);
 	}
 	else if (isalpha(c))
@@ -375,19 +398,18 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 
 		if (ispunct(c))
 		{
-			SIOStream::rollback();
 			rollback();
 		}
 		else if (isspace(c))
 		{
-			rollback();
+			rollback_str_buffer();
 		}
 		else if (c != 0)
 		{
 			return false;
 		}
 
-		return PUSH_TOKEN_VAL(SIOTokenType::VALUE, 1); // TODO: implement string table
+		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, 1); // TODO: implement string table
 	}
 
 	return false;
@@ -405,9 +427,15 @@ char SIOTokenizer::get_and_move_char()
 	return cache_char(SIOStream::get_and_move_char());
 }
 
-bool SIOTokenizer::rollback()
+bool SIOTokenizer::rollback(int i)
 {
-	return --str_buffer_i > -1;
+	return SIOStream::rollback(i) && rollback_str_buffer(i);
+}
+
+bool SIOTokenizer::rollback_str_buffer(int i)
+{
+	str_buffer_i -= i;
+	return str_buffer_i > -1;
 }
 
 SIOTokenizer::SIOTokenizer(string file) : SIOStream(file)
@@ -429,7 +457,7 @@ bool SIOTokenizer::tokenize(string& error)
 	while (state && !done())
 	{
 		state = parse(error);
-		flush_cache();
+		flush_str_cache();
 	}
 
 	return state;

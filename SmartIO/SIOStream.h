@@ -12,15 +12,11 @@ public:
 protected:
 	char get_char();
 	char get_and_move_char();
-	char peek_char();
-	bool skip_char();
+	bool skip_char(int i = 1);
+	char rollback_and_get_char(int i = 1);
 
-	bool rollback();
+	bool rollback(int i = 1);
 	bool done();
 
 	bool is_token_end();
-
-	bool is_empty(char c);
-
-	bool next_is_empty();
 };
