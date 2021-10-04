@@ -71,6 +71,27 @@ bool SIONonTerminalNode::parse_leaf(SIOTokenWalker& walker, SIONSymbol* target)
 	if (token != nullptr)
 	{
 		target = new SIONSymbol(token, this);
+
+#ifdef SIO_DEBUG
+		if (token->type == SIOTokenType::IDENTIFIER)
+		{
+			string s;
+			if (SIOStringMapper::global_mapper()->load_str(token->value, s))
+			{
+				dot_debugger().create_and_close_node("ID", s);
+			}
+			else
+			{
+				dot_debugger().create_and_close_node("ID_RAW", token->value);
+			}
+			
+		}
+		else
+		{
+			dot_debugger().create_and_close_node("Value", token->value);
+		}
+#endif // SIO_DEBUG
+
 		return true;
 	}
 	
@@ -115,7 +136,7 @@ ostream& operator<<(ostream& os, const SIOBaseNode& node)
 
 const char* SIOBaseNode::get_raw_name() const
 {
-	return typeid(*this).name();
+	return CLASSNAME_THIS;
 }
 
 const char* SIOBaseNode::get_name() const

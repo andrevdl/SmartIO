@@ -2,37 +2,44 @@
 
 bool SIONExpr::create_expr(SIOTokenWalker& walker, SIONExpr* node)
 {
-	return node->parse_node(walker, node->term) && node->parse_node(walker, node->expr2);
+	START_TREE_NODE("Expr", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->term) && node->parse_node(walker, node->expr2));
 }
 
 bool SIONExprTerm::create_term(SIOTokenWalker& walker, SIONExprTerm* node)
 {
-	return node->parse_node(walker, node->factor) && node->parse_node(walker, node->term2);
+	START_TREE_NODE("Expr", "Term");
+	FINISH_TREE_NODE(node->parse_node(walker, node->factor) && node->parse_node(walker, node->term2));
 }
 
 bool SIONExprFactor::create_factor_nested(SIOTokenWalker& walker, SIONExprFactor* node)
 {
-	return node->parse_node(walker, node->expr) && walker.pop_type() == SIOTokenType::RPAR;
+	START_TREE_NODE("Expr", "Nested");
+	FINISH_TREE_NODE(node->parse_node(walker, node->expr) && walker.pop_type() == SIOTokenType::RPAR);
 }
 
 bool SIONExprFactor::create_factor_value(SIOTokenWalker& walker, SIONExprFactor* node)
 {
-	return node->parse_leaf(walker, node->symbol);
+	START_TREE_NODE("ExprFactor", "Value");
+	FINISH_TREE_NODE(node->parse_leaf(walker, node->symbol));
 }
 
 bool SIONExprFactor::create_factor_id(SIOTokenWalker& walker, SIONExprFactor* node)
 {
-	return node->parse_node(walker, node->id);
+	START_TREE_NODE("ExprFactor", "ID");
+	FINISH_TREE_NODE(node->parse_node(walker, node->id));
 }
 
 bool SIONExpr2::create_expr_add(SIOTokenWalker& walker, SIONExpr2* node)
 {
-	return node->parse_node(walker, node->term) && node->parse_node(walker, node->expr2);
+	START_TREE_NODE("ExprOp", "+");
+	FINISH_TREE_NODE(node->parse_node(walker, node->term) && node->parse_node(walker, node->expr2));
 }
 
 bool SIONExpr2::create_expr_min(SIOTokenWalker& walker, SIONExpr2* node)
 {
-	return node->parse_node(walker, node->term) && node->parse_node(walker, node->expr2);
+	START_TREE_NODE("ExprOp", "-");
+	FINISH_TREE_NODE(node->parse_node(walker, node->term) && node->parse_node(walker, node->expr2));
 }
 
 void SIONExpr2::print_dot_graph_body(ostream& os) const
@@ -53,12 +60,14 @@ void SIONExpr2::print_dot_graph_body(ostream& os) const
 
 bool SIONExprTerm2::create_term_multi(SIOTokenWalker& walker, SIONExprTerm2* node)
 {
-	return node->parse_node(walker, node->factor) && node->parse_node(walker, node->term2);
+	START_TREE_NODE("TermOp", "*");
+	FINISH_TREE_NODE(node->parse_node(walker, node->factor) && node->parse_node(walker, node->term2));
 }
 
 bool SIONExprTerm2::create_term_divide(SIOTokenWalker& walker, SIONExprTerm2* node)
 {
-	return node->parse_node(walker, node->factor) && node->parse_node(walker, node->term2);
+	START_TREE_NODE("TermOp", "/");
+	FINISH_TREE_NODE(node->parse_node(walker, node->factor) && node->parse_node(walker, node->term2));
 }
 
 void SIONExprTerm2::print_dot_graph_body(ostream& os) const

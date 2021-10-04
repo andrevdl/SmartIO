@@ -40,9 +40,8 @@ int main()
 
 				if (node != nullptr)
 				{
-					cout << "parsing success" << endl << endl << *node;
+					cout << "parsing success" << endl << endl << dot_debugger();
 					//cout << "parsing success" << endl << endl << *node;
-					//SIOParser::print(node);
 				}
 				else
 				{
@@ -59,6 +58,7 @@ int main()
 
 		// clear console
 		std::cout << "\x1B[2J\x1B[H";
+		CLEAR_TREE_DEBUGGER;
 
 		cout << "Provided statement (exit, for closing): ";
 		getline(cin, text);

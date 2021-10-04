@@ -2,10 +2,11 @@
 
 bool SIONIdentifier::create_id(SIOTokenWalker& walker, SIONIdentifier* node)
 {
-	return node->parse_leaf(walker, node->symbol) && node->parse_node(walker, node->id2);
+	START_TREE_NODE("Identifier", "");
+	FINISH_TREE_NODE(node->parse_leaf(walker, node->symbol) && node->parse_node(walker, node->id2));
 }
 
-void SIONIdentifier::print_dot_graph_body(ostream& os) const
+void SIONIdentifier::print_dot_graph_body(ostream& os) const // TODO: RESOLVE THIS VALUES IN THE NEW SYSTEM !!!
 {
 	if (id2 != nullptr)
 	{
@@ -25,6 +26,8 @@ void SIONIdentifier::print_dot_graph_body(ostream& os) const
 
 bool SIONIdentifier2::create_call(SIOTokenWalker& walker, SIONIdentifier2* node)
 {
+	START_TREE_NODE("Parameters", "");
+
 	SIOTokenType type = walker.peek_type();
 	if (type != SIOTokenType::EMPTY)
 	{
@@ -33,33 +36,40 @@ bool SIONIdentifier2::create_call(SIOTokenWalker& walker, SIONIdentifier2* node)
 			while (type != SIOTokenType::RPAR)
 			{
 				if (!node->parse_node(walker, node->params, false))
-					return false;
+				{
+					FINISH_TREE_NODE(false);
+				}
+					
 
 				type = walker.pop_type();
 				if (type == SIOTokenType::EMPTY || (type != SIOTokenType::COMMA && type != SIOTokenType::RPAR))
-					return false;
+				{
+					FINISH_TREE_NODE(false);
+				}
 			}
 
-			return type == SIOTokenType::RPAR && node->parse_node(walker, node->arr) && node->parse_node(walker, node->chain);
+			FINISH_TREE_NODE(type == SIOTokenType::RPAR && node->parse_node(walker, node->arr) && node->parse_node(walker, node->chain));
 		}
 		else
 		{
 			walker.pop();
-			return node->parse_node(walker, node->arr) && node->parse_node(walker, node->chain);
+			FINISH_TREE_NODE(node->parse_node(walker, node->arr) && node->parse_node(walker, node->chain));
 		}
 	}
 
-	return false;
+	FINISH_TREE_NODE(false);
 }
 
 bool SIONIdentifier2::create_array(SIOTokenWalker& walker, SIONIdentifier2* node)
 {
-	return node->parse_node(walker, node->arr);
+	START_TREE_NODE("ID2Array", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->arr));
 }
 
 bool SIONIdentifier2::create_chain(SIOTokenWalker& walker, SIONIdentifier2* node)
 {
-	return node->parse_node(walker, node->chain);
+	START_TREE_NODE("ID2Chain", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->chain));
 }
 
 void SIONIdentifier2::print_dot_graph_body(ostream& os) const
@@ -76,6 +86,8 @@ void SIONIdentifier2::print_dot_graph_body(ostream& os) const
 
 bool SIONArray::create_array(SIOTokenWalker& walker, SIONArray* node)
 {
+	START_TREE_NODE("Indices", "");
+
 	SIOTokenType type = walker.peek_type();
 	if (type != SIOTokenType::EMPTY)
 	{
@@ -84,28 +96,33 @@ bool SIONArray::create_array(SIOTokenWalker& walker, SIONArray* node)
 			while (type != SIOTokenType::RBR)
 			{
 				if (!node->parse_node(walker, node->indices, false))
-					return false;
+				{
+					FINISH_TREE_NODE(false);
+				}
 
 				type = walker.pop_type();
 				if (type == SIOTokenType::EMPTY || (type != SIOTokenType::COMMA && type != SIOTokenType::RBR))
-					return false;
+				{
+					FINISH_TREE_NODE(false);
+				}
 			}
 
-			return type == SIOTokenType::RBR && node->parse_node(walker, node->arr);
+			FINISH_TREE_NODE(type == SIOTokenType::RBR && node->parse_node(walker, node->arr));
 		}
 		else
 		{
 			walker.pop();
-			return node->parse_node(walker, node->arr);
+			FINISH_TREE_NODE(node->parse_node(walker, node->arr));
 		}
 	}
 
-	return false;
+	FINISH_TREE_NODE(false);
 }
 
 bool SIONArray::create_chain(SIOTokenWalker& walker, SIONArray* node)
 {
-	return node->parse_node(walker, node->chain);
+	START_TREE_NODE("ArrayChain", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->chain));
 }
 
 void SIONArray::print_dot_graph_body(ostream& os) const
@@ -115,5 +132,6 @@ void SIONArray::print_dot_graph_body(ostream& os) const
 
 bool SIONIdentifierChain::create_chain(SIOTokenWalker& walker, SIONIdentifierChain* node)
 {
-	return node->parse_node(walker, node->id) && node->parse_node(walker, node->chain);
+	START_TREE_NODE("IDChain", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->id) && node->parse_node(walker, node->chain));
 }

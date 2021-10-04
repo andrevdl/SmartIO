@@ -4,6 +4,7 @@
 #include <functional>
 #include "../SIOCommon.h"
 #include "../SIOTokenWalker.h"
+#include "../Debugger/SIODotDebugger.h"
 
 class SIONonTerminalNode;
 

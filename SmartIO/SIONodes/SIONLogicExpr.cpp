@@ -2,33 +2,39 @@
 
 bool SIONLogicExprExpr::create_expr(SIOTokenWalker& walker, SIONLogicExprExpr* node)
 {
-	return node->parse_node(walker, node->expr);
+	START_TREE_NODE("LogicExprExpr", "Expr");
+	FINISH_TREE_NODE(node->parse_node(walker, node->expr));
 }
 
 bool SIONLogicExprExpr::create_nested_expr(SIOTokenWalker& walker, SIONLogicExprExpr* node)
 {
-	return node->parse_node(walker, node->expr) && walker.pop_type() == SIOTokenType::RPAR;
+	START_TREE_NODE("LogicExprExpr", "Nested");
+	FINISH_TREE_NODE(node->parse_node(walker, node->expr) && walker.pop_type() == SIOTokenType::RPAR);
 }
 
 bool SIONLogicExprExpr2::create_expr(SIOTokenWalker& walker, SIONLogicExprExpr2* node)
 {
-	return node->parse_node(walker, node->expr);
+	START_TREE_NODE("LogicExpr2", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->expr));
 }
 
 bool SIONLogicExprExpr2::create_not_expr(SIOTokenWalker& walker, SIONLogicExprExpr2* node)
 {
+	START_TREE_NODE("LogicExpr2", "Not");
 	node->inverse = true;
-	return node->parse_node(walker, node->expr);
+	FINISH_TREE_NODE(node->parse_node(walker, node->expr));
 }
 
 bool SIONLogicExpr::create_expr(SIOTokenWalker& walker, SIONLogicExpr* node)
 {
-	return node->parse_node(walker, node->unit) && node->parse_node(walker, node->expr2);
+	START_TREE_NODE("LogicExpr", "Expr");
+	FINISH_TREE_NODE(node->parse_node(walker, node->unit) && node->parse_node(walker, node->expr2));
 }
 
 bool SIONLogicExpr2::create_logic(SIOTokenWalker& walker, SIONLogicExpr2* node)
 {
-	return node->parse_node(walker, node->unit) && node->parse_node(walker, node->sub);
+	START_TREE_NODE("LogicExpr", "Logic");
+	FINISH_TREE_NODE(node->parse_node(walker, node->unit) && node->parse_node(walker, node->sub));
 }
 
 void SIONLogicExpr2::print_dot_graph_body(ostream& os) const
@@ -49,12 +55,14 @@ void SIONLogicExpr2::print_dot_graph_body(ostream& os) const
 
 bool SIONCompareExpr::create_compare(SIOTokenWalker& walker, SIONCompareExpr* node)
 {
-	return node->parse_node(walker, node->expr) && node->parse_node(walker, node->compare2);
+	START_TREE_NODE("Compare", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->expr) && node->parse_node(walker, node->compare2));
 }
 
 bool SIONCompareExpr2::create_compare(SIOTokenWalker& walker, SIONCompareExpr2* node)
 {
-	return node->parse_node(walker, node->expr) && node->parse_node(walker, node->sub);
+	START_TREE_NODE("Compare2", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->expr) && node->parse_node(walker, node->sub));
 }
 
 void SIONCompareExpr2::print_dot_graph_body(ostream& os) const
@@ -75,21 +83,25 @@ void SIONCompareExpr2::print_dot_graph_body(ostream& os) const
 
 bool SIONLogicExprUnit::create_unit(SIOTokenWalker& walker, SIONLogicExprUnit* node)
 {
-	return node->parse_node(walker, node->unit);
+	START_TREE_NODE("LogicExprUnit", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->unit));
 }
 
 bool SIONLogicExprUnit::create_not_unit(SIOTokenWalker& walker, SIONLogicExprUnit* node)
 {
+	START_TREE_NODE("LogicExprUnit", "Not");
 	node->inverse = true;
-	return node->parse_node(walker, node->unit);
+	FINISH_TREE_NODE(node->parse_node(walker, node->unit));
 }
 
 bool SIONLogicExprUnit2::create_unit(SIOTokenWalker& walker, SIONLogicExprUnit2* node)
 {
-	return node->parse_node(walker, node->compare);
+	START_TREE_NODE("LogicExprUnit2", "");
+	FINISH_TREE_NODE(node->parse_node(walker, node->compare));
 }
 
 bool SIONLogicExprUnit2::create_nested_unit(SIOTokenWalker& walker, SIONLogicExprUnit2* node)
 {
-	return node->parse_node(walker, node->expr) && walker.pop_type() == SIOTokenType::RPAR && node->parse_node(walker, node->compare2);
+	START_TREE_NODE("LogicExprUnit2", "Nested");
+	FINISH_TREE_NODE(node->parse_node(walker, node->expr) && walker.pop_type() == SIOTokenType::RPAR && node->parse_node(walker, node->compare2));
 }
