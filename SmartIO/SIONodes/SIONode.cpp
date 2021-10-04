@@ -1,5 +1,8 @@
 #include "SIONode.h"
 
+// temp -> may move
+#include "../SIOStringMapper.h"
+
 void SIOBaseNode::print_dot_graph(ostream& os) const
 {
 	os << get_uuid() << "[shape=record label=\"{" << get_name() << "|";
@@ -76,7 +79,22 @@ bool SIONonTerminalNode::parse_leaf(SIOTokenWalker& walker, SIONSymbol* target)
 
 void SIONSymbol::print_dot_graph_body(ostream& os) const
 {
-	os << this->token->value;
+	if (this->token->type == SIOTokenType::IDENTIFIER)
+	{
+		string s;
+		if (SIOStringMapper::global_mapper()->load_str(this->token->value, s))
+		{
+			os << s << " RAW";
+		}
+		else
+		{
+			os << this->token->value;
+		}	
+	}
+	else
+	{
+		os << this->token->value;
+	}
 }
 
 SIONSymbol::SIONSymbol(SIOToken* token, SIONonTerminalNode* parent) : SIOBaseNode(parent), token(token)

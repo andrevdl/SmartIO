@@ -51,7 +51,7 @@ bool SIOStream::bookmark()
 
 void SIOStream::restore_bookmark()
 {
-	my_str_index = bookmark_pos;
+	rollback(my_str_index - bookmark_pos);
 }
 
 bool SIOStream::compare_and_trap(const char c, const char check, bool& trap)
@@ -63,7 +63,7 @@ bool SIOStream::compare_and_trap(const char c, const char check, bool& trap)
 bool SIOStream::rollback(int i)
 {
 	my_str_index -= i;
-	return i >= 0;
+	return my_str_index >= 0;
 }
 
 bool SIOStream::done()

@@ -22,7 +22,7 @@ protected:
 
 	bool compare_and_trap(const char c, const char check, bool& trap);
 
-	bool rollback(int i = 1);
+	virtual bool rollback(int i = 1);
 	bool done();
 
 	bool is_token_end();

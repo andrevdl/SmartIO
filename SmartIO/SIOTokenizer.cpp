@@ -1,5 +1,7 @@
 #include "SIOTokenizer.h"
 
+#include "SIOStringMapper.h"
+
 const char SIOTokenizer::cache_char(const char c)
 {
 	if (c == 0 || str_buffer_i < 0 || str_buffer_i >= TOKENIZER_BUFFER_SIZE - 1)
@@ -314,7 +316,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '"')
 		{
 			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, 1); // TODO: implement string table
+			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, SIOStringMapper::global_mapper()->store_str(get_str_buffer()));
 		}
 		
 		return false;
@@ -334,7 +336,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '\'')
 		{
 			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, 1); // TODO: implement string table
+			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, SIOStringMapper::global_mapper()->store_str(get_str_buffer()));
 		}
 
 		return false;
@@ -399,7 +401,7 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 			return false;
 		}
 
-		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, 1); // TODO: implement string table
+		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, SIOStringMapper::global_mapper()->store_str(get_str_buffer()));
 	}
 
 	return false;
