@@ -6,6 +6,6 @@ cmake_minimum_required (VERSION 3.8)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DSIO_DEBUG")
 
 # Add source to this project's executable.
-add_executable (SmartIO "SmartIO.cpp" "SmartIO.h" "SIOTokenizer.cpp" "SIOTokenizer.h" "SIOTokens.h" "SIOStream.h" "SIOCommon.h" "SIOStream.cpp" "SIOParser.cpp" "SIOParser.h" "SIONodes/SIONExpr.h" "SIONodes/SIONode.h" "SIONodes/SIONCommon.h" "SIONodes/SIONExpr.cpp" "SIONodes/SIONode.cpp" "SIOTokenWalker.cpp" "SIOTokenWalker.h" "SIONodes/SIONProgram.cpp" "SIONodes/SIONProgram.h" "SIONodes/SIONIdentifier.cpp" "SIONodes/SIONIdentifier.h" "SIONodes/SIONLogicExpr.cpp" "SIONodes/SIONLogicExpr.h" "SIONodes/SIONStmt.cpp" "SIONodes/SIONStmt.h" "SIOStringMapper.h" "SIOStringMapper.cpp" "Debugger/SIODotDebugger.cpp" "Debugger/SIODotDebugger.h")
+add_executable (SmartIO "SmartIO.cpp" "SmartIO.h" "SIOTokenizer.cpp" "SIOTokenizer.h" "SIOTokens.h" "SIOStream.h" "SIOCommon.h" "SIOStream.cpp" "SIOParser.cpp" "SIOParser.h" "Parser/sio_expr.h"  "Parser/sio_common.h" "Parser/sio_expr.cpp"  "SIOTokenWalker.cpp" "SIOTokenWalker.h" "Parser/sio_program.cpp" "Parser/sio_program.h" "Parser/sio_id.cpp" "Parser/sio_id.h" "Parser/sio_logic_expr.cpp" "Parser/sio_logic_expr.h" "Parser/sio_stmt.cpp" "Parser/sio_stmt.h" "SIOStringMapper.h" "SIOStringMapper.cpp" "Debugger/SIODotDebugger.cpp" "Debugger/SIODotDebugger.h")
 
 # TODO: Add tests and install targets if needed.

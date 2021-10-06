@@ -7,7 +7,7 @@
 
 #include "SIOTokenizer.h"
 #include "SIOParser.h"
-#include "SIONodes/SIONCommon.h"
+#include "Parser/sio_common.h"
 
 using namespace std;
 
@@ -17,6 +17,8 @@ int main()
 	//string text = "(4 == 5) == 7"; // should work
 	//string text = "(2 / (5 - 4) - x(y[n][r] + j(o)[u], z + p + q().m)) == 99"; // == 99 is missing in the tree
 	//string text = "5 && (2 == ((3 + 4) + 7))";
+
+	// mod: (2 / (5 - 4) - x().m) == 99
 
 	string text;
 
@@ -36,12 +38,21 @@ int main()
 				cout << tokenizer << endl;
 
 				SIOParser parser(&tokenizer);
-				SIONProgram* node = parser.parse(err);
+				//SIONProgram* node = parser.parse(err);
 
-				if (node != nullptr)
+				//if (node != nullptr)
+				//{
+				//	cout << "parsing success" << endl << endl << dot_debugger();
+				//	//cout << "parsing success" << endl << endl << *node;
+				//}
+				//else
+				//{
+				//	cout << "parsing error" << endl << endl;
+				//}
+
+				if (parser.parse(err))
 				{
 					cout << "parsing success" << endl << endl << dot_debugger();
-					//cout << "parsing success" << endl << endl << *node;
 				}
 				else
 				{

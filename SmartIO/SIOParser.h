@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SIOCommon.h"
-#include "SIONodes/SIONProgram.h"
+#include "Parser/sio_program.h"
 #include "SIOTokenizer.h"
 #include "SIOTokenWalker.h"
 
@@ -12,5 +12,5 @@ private:
 public:
 	SIOParser(SIOTokenizer* tokenizer);
 
-	SIONProgram* parse(string& error);
+	bool parse(string& error);
 };
