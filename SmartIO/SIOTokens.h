@@ -1,5 +1,7 @@
 #pragma once
 
+#include "internal/sio_data.h"
+
 enum class SIOTokenType
 {
 	// Parser flow
@@ -126,4 +128,19 @@ inline const bool is_comp_op(const SIOTokenType& type)
 inline const bool is_logic_op(const SIOTokenType& type)
 {
 	return type == SIOTokenType::AND || type == SIOTokenType::OR;
+}
+
+inline const bool translate_literal_to_token(const SIODataType type, SIOTokenType& token_type)
+{
+	switch (type)
+	{
+	case SIODataType::INTEGER:
+		token_type = SIOTokenType::VALUE;
+		return true;
+	case SIODataType::STRING:
+		token_type = SIOTokenType::DSTRING;
+		return true;
+	}
+
+	return false;
 }

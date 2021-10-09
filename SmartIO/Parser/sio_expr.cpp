@@ -52,9 +52,9 @@ bool tree_expr_factor_val(SIOTokenWalker& walker, void* dest)
 	FINISH_TREE_NODE(true);
 }
 
-bool tree_expr_factor_id(SIOTokenWalker& walker, void* dest)
+bool tree_expr_factor_literal(SIOTokenWalker& walker, void* dest)
 {
-	START_TREE_NODE("ExprFactor", "ID");
+	START_TREE_NODE("ExprFactor", "Literal");
 	FINISH_TREE_NODE(tree_parse_token(walker, tree_id_handler, dest));
 }
 
@@ -120,7 +120,7 @@ bool tree_expr_factor_handler(SIOTokenType& type, bool& eat, t_parse_tree_func& 
 		func = tree_expr_factor_val;
 		return true;
 	case SIOTokenType::IDENTIFIER:
-		func = tree_expr_factor_id;
+		func = tree_expr_factor_literal;
 		return true;
 	default:
 		return false;

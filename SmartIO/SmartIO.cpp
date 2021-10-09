@@ -8,6 +8,7 @@
 #include "SIOTokenizer.h"
 #include "SIOParser.h"
 #include "Parser/sio_common.h"
+#include "internal/sio_context.h"
 
 using namespace std;
 
@@ -20,6 +21,8 @@ int main()
 
 	// mod: (2 / (5 - 4) - x().m) == 99
 
+	SIOContext* context = new SIOContext();
+
 	string text;
 
 	cout << "Provided statement (exit, for closing): ";
@@ -29,7 +32,7 @@ int main()
 	{
 		if (text != "")
 		{
-			SIOTokenizer tokenizer(text);
+			SIOTokenizer tokenizer(text, context);
 
 			string err = "";
 			if (tokenizer.tokenize(err))

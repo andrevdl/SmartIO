@@ -7,6 +7,8 @@
 #include "SIOStream.h"
 #include "SIOTokens.h"
 
+#include "internal/sio_context.h"
+
 constexpr auto TOKENIZER_BUFFER_SIZE = 4096;
 
 #define PUSH_TOKEN_VAL(t, v) push_token(new SIOToken{ t, v })
@@ -15,6 +17,8 @@ constexpr auto TOKENIZER_BUFFER_SIZE = 4096;
 class SIOTokenizer : SIOStream
 {
 private:
+	SIOContext* ctx;
+
 	char* str_buffer;
 	short str_buffer_i;
 
@@ -33,7 +37,7 @@ protected:
 	bool rollback(int i = 1);
 	bool rollback_str_buffer(int i = 1);
 public:
-	SIOTokenizer(string file);
+	SIOTokenizer(string file, SIOContext* ctx);
 	~SIOTokenizer();
 
 	bool tokenize(string& error);

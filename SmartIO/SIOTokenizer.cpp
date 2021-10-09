@@ -1,7 +1,5 @@
 #include "SIOTokenizer.h"
 
-#include "SIOStringMapper.h"
-
 const char SIOTokenizer::cache_char(const char c)
 {
 	if (c == 0 || str_buffer_i < 0 || str_buffer_i >= TOKENIZER_BUFFER_SIZE - 1)
@@ -316,7 +314,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '"')
 		{
 			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, SIOStringMapper::global_mapper()->store_str(get_str_buffer()));
+			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, ctx->store_str(get_str_buffer()));
 		}
 		
 		return false;
@@ -336,7 +334,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '\'')
 		{
 			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, SIOStringMapper::global_mapper()->store_str(get_str_buffer()));
+			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, ctx->store_str(get_str_buffer()));
 		}
 
 		return false;
@@ -401,7 +399,19 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 			return false;
 		}
 
-		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, SIOStringMapper::global_mapper()->store_str(get_str_buffer()));
+		SIODataType data_type;
+		SIODataRef ref = ctx->str_token_translate(get_str_buffer(), data_type);
+		
+		// Const folding only for strings and integers (no doubles or formatted data)
+		// Doubles and formatted data may in future, for now they are multiple tokens
+		// I.e.: Double => VALUE DOT VALUE
+		SIOTokenType token_type;
+		if (ref.type == SIODataRef::Type::LITERAL && translate_literal_to_token(data_type, token_type))
+		{
+			return PUSH_TOKEN_VAL(token_type, ref.ref);
+		}
+
+		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, ref.ref);
 	}
 
 	return false;
@@ -430,7 +440,7 @@ bool SIOTokenizer::rollback_str_buffer(int i)
 	return str_buffer_i > -1;
 }
 
-SIOTokenizer::SIOTokenizer(string file) : SIOStream(file)
+SIOTokenizer::SIOTokenizer(string file, SIOContext* ctx) : ctx(ctx), SIOStream(file)
 {
 	str_buffer = new char[TOKENIZER_BUFFER_SIZE];
 	str_buffer_i = 0;
