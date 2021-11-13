@@ -3,11 +3,14 @@
 #include <ostream>
 #include <stack>
 #include <sstream>
+#include <string>
 #include "../SIOCommon.h"
 
 class SIODotDebugger
 {
 private:
+	int64_t uuid_counter = 0;
+
 	stack<uint64_t> path;
 	uint64_t parent = 0;
 	stringstream buffer;
@@ -30,14 +33,10 @@ public:
 	void close_node();
 
 	const void print(ostream& os) const;
+	string str();
+
 	void clear();
 };
-
-inline SIODotDebugger& dot_debugger()
-{
-	static SIODotDebugger debugger;
-	return debugger;
-}
 
 template<typename T>
 inline void SIODotDebugger::store_node_data(uint64_t uuid, char* name, T body)
@@ -65,15 +64,3 @@ inline void SIODotDebugger::create_and_close_node(char* name, T body)
 	store_node_data(uuid, name, body);
 	store_link(uuid);
 }
-
-#ifdef SIO_DEBUG
-#define START_TREE_NODE(s, d) dot_debugger().create_node(s, d)
-#define CLOSE_TREE_NODE dot_debugger().close_node();
-#define FINISH_TREE_NODE(r) uint64_t r_temp = r; CLOSE_TREE_NODE return r_temp
-#define CLEAR_TREE_DEBUGGER dot_debugger().clear()
-#else
-#define START_TREE_NODE(s, d)
-#define CLOSE_TREE_NODE
-#define FINISH_TREE_NODE(r) return r
-#define CLEAR_TREE_DEBUGGER
-#endif // SIO_DEBUG

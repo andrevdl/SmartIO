@@ -16,6 +16,7 @@ enum class SIOTokenType
 	VALUE,
 	DSTRING, // double qouted string
 	SSTRING, // single qouted string
+	DOUBLE,
 
 	// Keywords
 	IF,
@@ -139,6 +140,9 @@ inline const bool translate_literal_to_token(const SIODataType type, SIOTokenTyp
 		return true;
 	case SIODataType::STRING:
 		token_type = SIOTokenType::DSTRING;
+		return true;
+	case SIODataType::DOUBLE:
+		token_type = SIOTokenType::DOUBLE;
 		return true;
 	}
 

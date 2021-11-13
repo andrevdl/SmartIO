@@ -14,7 +14,7 @@ LogicExprUnit  -> <!> LogicExprUnit' | LogicExprUnit'
 LogicExprUnit' -> <(> LogicExpr <)> CompareExpr' | CompareExpr
 
 CompareExpr    -> LogicExprExpr CompareExpr'
-CompareExpr'   -> <==> LogicExprExpr | <<>> LogicExprExpr | {empty}
+CompareExpr'   -> <==> LogicExprExpr CompareExpr' | <<>> LogicExprExpr CompareExpr' | {empty}
 
 LogicExprExpr  -> <(> CompareExpr <)> | LogicExprExpr'
 LogicExprExpr' -> <!> Expr | Expr
@@ -24,7 +24,7 @@ LogicExprExpr' -> <!> Expr | Expr
 Goal   -> Expr
 
 Expr   -> Term Expr'
-Expr'   -> <+> Term Expr' | <-> Term Expr' | {empty}
+Expr'  -> <+> Term Expr' | <-> Term Expr' | {empty}
 Term   -> Factor Term'
 Term'  -> <*> Factor Term' | <%> Factor Term' | {empty}
 

@@ -30,12 +30,52 @@ struct SIOData
 {
 	SIODataType datatype;
 	char flags;
-	uint64_t value;	
+
+	// Direct value or proxy to SIODataRef
+	union {
+		uintptr_t ptr;
+		long double dbl;
+		uint64_t i;
+	} val;	
 };
 
-inline SIOData define_data(SIODataType datatype, char flags, uint64_t value)
+struct SIODataRef
+{
+	enum class Type {
+		STRING,
+		LITERAL,
+	} type;
+	uint64_t ref;
+	uint64_t ref_count;
+};
+
+inline uint64_t get_ref(uint64_t value)
+{
+	return ((SIODataRef*)value)->ref;
+}
+
+inline uint64_t get_ref(SIOData data)
+{
+	return ((SIODataRef*)data.val.ptr)->ref;
+}
+
+inline SIOData define_data_val(SIODataType datatype, char flags, uint64_t value)
 {
 	return { datatype, flags, value };
+}
+
+inline SIOData define_data_ptr(SIODataType datatype, char flags, uintptr_t ptr)
+{
+	SIOData data = { datatype, flags };
+	data.val.ptr = ptr;
+	return data;
+}
+
+inline SIOData define_data_dbl(SIODataType datatype, char flags, long double value)
+{
+	SIOData data = { datatype, flags };
+	data.val.dbl = value;
+	return data;
 }
 
 inline bool is_nummeric_data(SIODataType type)

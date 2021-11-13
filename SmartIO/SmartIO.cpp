@@ -9,11 +9,20 @@
 #include "SIOParser.h"
 #include "Parser/sio_common.h"
 #include "internal/sio_context.h"
+#include "internal/sio_define.h"
+#include "internal/sio_memory.h"
 
 using namespace std;
 
 int main()
 {
+	SIOSet bit_array;
+
+	bit_array.set_bit(240);
+	bool xy = bit_array.get_bit(240);
+
+	///////////////
+
 	//string text = "(0)==(2)==3"; // should throw an error
 	//string text = "(4 == 5) == 7"; // should work
 	//string text = "(2 / (5 - 4) - x(y[n][r] + j(o)[u], z + p + q().m)) == 99"; // == 99 is missing in the tree
@@ -53,9 +62,13 @@ int main()
 				//	cout << "parsing error" << endl << endl;
 				//}
 
-				if (parser.parse(err))
+				if (parser.parse(*context, err))
 				{
-					cout << "parsing success" << endl << endl << dot_debugger();
+#ifdef SIO_DEBUG
+					cout << "parsing success" << endl << endl << *(context->get_dot_tree_debugger());
+#else
+					cout << "parsing success" << endl << endl;
+#endif // SIO_DEBUG
 				}
 				else
 				{
@@ -72,7 +85,9 @@ int main()
 
 		// clear console
 		std::cout << "\x1B[2J\x1B[H";
-		CLEAR_TREE_DEBUGGER;
+#ifdef SIO_DEBUG
+		context->get_dot_tree_debugger()->clear();
+#endif // SIO_DEBUG
 
 		cout << "Provided statement (exit, for closing): ";
 		getline(cin, text);

@@ -2,40 +2,53 @@
 
 #include <unordered_map>
 #include <string>
+#include "../debugger/SIODotDebugger.h"
 
 #include "sio_data.h"
 
 using namespace std;
 
-struct SIODataRef
-{
-	enum class Type {
-		STRING,
-		LITERAL,
-	} type;
-	uint64_t ref;
-};
-
 class SIOContext
 {
 private:
+#ifdef SIO_DEBUG
+	SIODotDebugger* dot_tree_debugger;
+#endif // SIO_DEBUG
+#ifdef SIO_AST_DEBUG_CAP
+	SIODotDebugger* dot_ast_debugger;
+#endif // SIO_AST_DEBUG_CAP
+
 	// Translates string in code to int reference 
-	unordered_map<string, SIODataRef> refs;
+	unordered_map<string, SIODataRef*> refs;
 	vector<string> strings;
 	vector<SIOData> consts;
 
-	unordered_map<string, SIODataRef>::const_iterator find(string str);
+	unordered_map<string, SIODataRef*>::iterator find(string str);
 public:
 	SIOContext();
+	~SIOContext();
 
-	uint64_t store_str(string str);
+	SIODataRef& store_str(string str);
 	bool load_str(uint64_t& i, string& str);
 
 	bool store_const(string str, SIOData data);
+	bool store_str_const(string str, char flags, string val);
 	bool load_const(string str, SIOData& data);
 	bool load_const(uint64_t& i, SIOData& data);
+	bool load_const_ref(string str, SIODataRef* ref);
 
-	SIODataRef str_token_translate(string str, SIODataType& type);
+	SIODataRef& str_token_translate(string str, SIODataType& type);
 	bool allowed_as_literal(string str);
 	bool is_data_marker(string str);
+
+	void optimize();
+
+	void store_parse_err(string err) {}; // placeholder for now => add position info ...
+
+#ifdef SIO_DEBUG
+	SIODotDebugger* get_dot_tree_debugger();
+#endif // SIO_DEBUG
+#ifdef SIO_AST_DEBUG_CAP
+	SIODotDebugger* get_dot_ast_debugger();
+#endif // SIO_DEBUG
 };

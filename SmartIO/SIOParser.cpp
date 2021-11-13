@@ -1,11 +1,14 @@
 #include "SIOParser.h"
 
+// debug
+#include "parser/sio_debug_win.h"
+
 SIOParser::SIOParser(SIOTokenizer* tokenizer) : walker(tokenizer)
 {
 	
 }
 
-bool SIOParser::parse(string& error)
+bool SIOParser::parse(SIOContext& ctx, string& error)
 {
 	//bool success = true;
 	//SIONProgram* program = new SIONProgram(nullptr);
@@ -15,8 +18,13 @@ bool SIOParser::parse(string& error)
 	//	return program;
 	//}
 
-	void* temp = nullptr;
-	return create_parse_tree(walker, temp);
+	AstNodeState* state = new AstNodeState();
+	bool r = create_parse_tree(ctx, SIOTokenType::EMPTY, walker, *state);
+
+	state->root_node->print(ctx.get_dot_ast_debugger());
+	set_clipboard(ctx.get_dot_ast_debugger()->str());
+
+	return r;
 
 	//RET_DELETE_AND_NULL(program);
 }

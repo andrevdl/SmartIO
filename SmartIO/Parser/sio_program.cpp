@@ -22,7 +22,12 @@
 //	return os;
 //}
 
-bool create_parse_tree(SIOTokenWalker& walker, void* dest)
+bool create_parse_tree(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state)
 {
-	return tree_parse_token(walker, tree_logic_expr_handler, dest);
+	//SIOAstRoot* root = new SIOAstRoot();
+	//state.root_node = root;
+	//state.curr_node = root;
+	//state.type = AstNodeType::PROGRAM;
+
+	return tree_parse_token(ctx, walker, tree_id_handler, state);
 }

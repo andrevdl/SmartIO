@@ -2,16 +2,15 @@
 
 uint64_t SIODotDebugger::get_uuid()
 {
-	static uint64_t uuid = 0;
-	if (uuid == ULLONG_MAX)
+	if (uuid_counter == ULLONG_MAX)
 	{
-		uuid = 0;
+		uuid_counter = 0;
 	}
 	else
 	{
-		++uuid;
+		++uuid_counter;
 	}
-	return uuid;
+	return uuid_counter;
 }
 
 void SIODotDebugger::store_link(uint64_t uuid)
@@ -45,6 +44,14 @@ const void SIODotDebugger::print(ostream& os) const
 	os << "root[shape = record label = \"root\"];" << endl;
 	os << buffer.str();
 	os << "}" << endl;
+}
+
+string SIODotDebugger::str()
+{ 
+	stringstream ss;
+	print(ss);
+
+	return ss.str();
 }
 
 ostream& operator<<(ostream& os, const SIODotDebugger& debugger)

@@ -1,28 +1,49 @@
 #pragma once
 
 #include "../SIOTokenWalker.h"
-#include "../Debugger/SIODotDebugger.h"
+#include "../internal/sio_context.h"
 
-typedef bool (*t_parse_tree_func)(SIOTokenWalker&, void* /*AST*/);
-typedef bool (*t_parse_tree_handler)(SIOTokenType& type, bool&, t_parse_tree_func&);
+#include "ast/sio_ast.h"
 
-inline bool tree_parse_token(SIOTokenWalker& walker, t_parse_tree_handler handler, void* dest)
+typedef bool (*t_parse_tree_func)(SIOContext&, SIOTokenType /*Last token*/, SIOTokenWalker&, AstNodeState&);
+typedef bool (*t_parse_tree_handler)(SIOTokenType& type, bool&, t_parse_tree_func&, AstNodeState& state);
+
+inline bool tree_parse_token(SIOContext& ctx, SIOTokenWalker& walker, t_parse_tree_handler handler, AstNodeState& state)
 {
 	SIOTokenType type = walker.peek_type();
 	bool eat = false;
 
+	state.type = AstNodeType::EMPTY;
+
 	t_parse_tree_func func = nullptr;
-	if (handler(type, eat, func))
+	if (handler(type, eat, func, state))
 	{
 		if (func != nullptr)
 		{
-			if (eat)
+#ifdef SIO_DEBUG
+			ctx.get_dot_tree_debugger()->create_node(state.debug_info.debug_name, state.debug_info.debug_body);
+#endif
+
+			SIOTokenType last = eat ? walker.pop_type() : walker.peek_type();
+			if (!func(ctx, last, walker, state))
 			{
-				walker.pop();
+				ctx.store_parse_err(state.err);
+				return false;
 			}
-			return func(walker, dest);
+
+#ifdef SIO_DEBUG
+			ctx.get_dot_tree_debugger()->close_node();
+#endif
 		}
 		return true;
 	}
+
+	state.err = "Unkown token...";
 	return false;
 }
+
+#ifdef SIO_DEBUG
+#define SIO_TREE_DEBUG_INFO(name, body) state.debug_info = { name, body }
+#else
+#define SIO_TREE_DEBUG_INFO(name, body)
+#endif // SIO_DEBUG

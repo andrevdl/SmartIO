@@ -63,8 +63,6 @@ bool SIOTokenizer::parse(string& error)
 				}
 			}
 		}
-
-		trap = true;
 	}
 	else if (compare_and_trap(c, 'i', trap))
 	{
@@ -76,8 +74,6 @@ bool SIOTokenizer::parse(string& error)
 				return PUSH_TOKEN(SIOTokenType::IF);
 			}
 		}
-
-		trap = true;
 	}
 	else if (compare_and_trap(c, 'v', trap))
 	{
@@ -93,8 +89,6 @@ bool SIOTokenizer::parse(string& error)
 				}
 			}
 		}
-
-		trap = true;
 	}
 	else if (c == '.')
 	{
@@ -314,7 +308,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '"')
 		{
 			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, ctx->store_str(get_str_buffer()));
+			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, (uintptr_t)&ctx->store_str(get_str_buffer()));
 		}
 		
 		return false;
@@ -334,7 +328,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '\'')
 		{
 			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, ctx->store_str(get_str_buffer()));
+			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, (uintptr_t)&ctx->store_str(get_str_buffer()));
 		}
 
 		return false;
@@ -402,16 +396,14 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 		SIODataType data_type;
 		SIODataRef ref = ctx->str_token_translate(get_str_buffer(), data_type);
 		
-		// Const folding only for strings and integers (no doubles or formatted data)
-		// Doubles and formatted data may in future, for now they are multiple tokens
-		// I.e.: Double => VALUE DOT VALUE
+		// Const folding
 		SIOTokenType token_type;
 		if (ref.type == SIODataRef::Type::LITERAL && translate_literal_to_token(data_type, token_type))
 		{
-			return PUSH_TOKEN_VAL(token_type, ref.ref);
+			return PUSH_TOKEN_VAL(token_type, (uintptr_t)&ref);
 		}
 
-		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, ref.ref);
+		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, (uintptr_t)&ref);
 	}
 
 	return false;
