@@ -2,33 +2,23 @@ Defiintion file for all grammars
 
 {...} => special result => empty, vector
 <...> => keyword, symbol
+;	  => comments
 
-============= Logic expression =============
-
-Goal           -> LogicExpr
-
-LogicExpr      -> LogicExprUnit LogicExpr'
-LogicExpr'     -> <&&> LogicExprUnit LogicExpr' LogicExpr' | <||> LogicExprUnit LogicExpr' LogicExpr' | {empty}
-
-LogicExprUnit  -> <!> LogicExprUnit' | LogicExprUnit'
-LogicExprUnit' -> <(> LogicExpr <)> CompareExpr' | CompareExpr
-
-CompareExpr    -> LogicExprExpr CompareExpr'
-CompareExpr'   -> <==> LogicExprExpr CompareExpr' | <<>> LogicExprExpr CompareExpr' | {empty}
-
-LogicExprExpr  -> <(> CompareExpr <)> | LogicExprExpr'
-LogicExprExpr' -> <!> Expr | Expr
-
-============= Math expression =============
+============= Expression =============
 
 Goal   -> Expr
 
-Expr   -> Term Expr'
-Expr'  -> <+> Term Expr' | <-> Term Expr' | {empty}
-Term   -> Factor Term'
-Term'  -> <*> Factor Term' | <%> Factor Term' | {empty}
-
-Factor -> <(> Expr <)> | {num} | {name}
+Expr        -> CompareExpr ; external alias
+CompareExpr -> LogicExpr CompareExpr'
+CompareExpr'-> <==> LogicExpr CompareExpr' | <<>> LogicExpr CompareExpr' | {empty}
+LogicExpr   -> ExprArith LogicExpr'
+LogicExpr'  -> <&&> ExprArith LogicExpr' | <||> ExprArith LogicExpr' | {empty}
+ExprArith   -> Term ExprArith'
+ExprArith'  -> <+> Term ExprArith' | <-> Term ExprArith' | {empty}
+Term        -> Factor Term'
+Term'       -> <*> Factor Term' | <%> Factor Term' | {empty}
+Factor      -> <!> Factor' | Factor'
+Factor'     -> <(> LogicExpr <)> | {num} | {name}
 
 ============= Indentifier =============
 

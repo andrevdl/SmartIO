@@ -29,5 +29,5 @@ bool create_parse_tree(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walke
 	//state.curr_node = root;
 	//state.type = AstNodeType::PROGRAM;
 
-	return tree_parse_token(ctx, walker, tree_id_handler, state);
+	return tree_parse_token(ctx, walker, tree_expr_handler, state);
 }
