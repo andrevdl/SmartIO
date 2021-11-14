@@ -416,6 +416,24 @@ bool SIOTokenizer::push_token(SIOToken* token)
 	return true;
 }
 
+const bool SIOTokenizer::translate_literal_to_token(const SIODataType type, SIOTokenType& token_type)
+{
+	switch (type)
+	{
+	case SIODataType::INTEGER:
+		token_type = SIOTokenType::VALUE;
+		return true;
+	case SIODataType::STRING:
+		token_type = SIOTokenType::DSTRING;
+		return true;
+	case SIODataType::DOUBLE:
+		token_type = SIOTokenType::DOUBLE;
+		return true;
+	}
+	
+	return false;
+}
+
 char SIOTokenizer::get_and_move_char()
 {
 	return cache_char(SIOStream::get_and_move_char());

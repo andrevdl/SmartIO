@@ -1,6 +1,8 @@
 #pragma once
 
-#include "SIOCommon.h"
+#include <string>
+
+using namespace std;
 
 class SIOStream
 {

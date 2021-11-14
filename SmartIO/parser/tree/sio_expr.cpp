@@ -13,7 +13,7 @@ bool tree_expr_compare_eq(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& wa
 	if (tree_parse_token(ctx, walker, tree_expr_logic_low_handler, state))
 	{
 		logic->assign_right(last, state);
-		state.store_node(logic, AstNodeType::LOGIC_EXPR);
+		state.store_node(logic);
 	
 		return tree_parse_token(ctx, walker, tree_expr_compare2_handler, state);
 	}
@@ -28,7 +28,7 @@ bool tree_expr_compare_neq(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& w
 	if (tree_parse_token(ctx, walker, tree_expr_logic_low_handler, state))
 	{
 		logic->assign_right(last, state);
-		state.store_node(logic, AstNodeType::LOGIC_EXPR);
+		state.store_node(logic);
 
 		return tree_parse_token(ctx, walker, tree_expr_compare2_handler, state);
 	}
@@ -48,7 +48,7 @@ bool tree_expr_logic_or(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walk
 	if (tree_parse_token(ctx, walker, tree_expr_logic_high_handler, state))
 	{
 		logic->assign_right(last, state);
-		state.store_node(logic, AstNodeType::LOGIC_EXPR);
+		state.store_node(logic);
 
 		return tree_parse_token(ctx, walker, tree_expr_logic_low2_handler, state);
 	}
@@ -68,7 +68,7 @@ bool tree_expr_logic_and(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& wal
 	if (tree_parse_token(ctx, walker, tree_expr_arith_handler, state))
 	{
 		logic->assign_right(last, state);
-		state.store_node(logic, AstNodeType::LOGIC_EXPR);
+		state.store_node(logic);
 
 		return tree_parse_token(ctx, walker, tree_expr_logic_high2_handler, state);
 	}
@@ -88,7 +88,7 @@ bool tree_expr_arith_add(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& wal
 	if (tree_parse_token(ctx, walker, tree_expr_term_handler, state))
 	{
 		expr->assign_right(last, state);
-		state.store_node(expr, AstNodeType::EXPR);
+		state.store_node(expr);
 
 		return tree_parse_token(ctx, walker, tree_expr_arith2_handler, state);
 	}
@@ -103,7 +103,7 @@ bool tree_expr_arith_min(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& wal
 	if (tree_parse_token(ctx, walker, tree_expr_term_handler, state))
 	{
 		expr->assign_right(last, state);
-		state.store_node(expr, AstNodeType::EXPR);
+		state.store_node(expr);
 
 		return tree_parse_token(ctx, walker, tree_expr_arith2_handler, state);
 	}
@@ -123,7 +123,7 @@ bool tree_expr_term2_mul(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& wal
 	if (tree_parse_token(ctx, walker, tree_expr_factor_handler, state))
 	{
 		expr->assign_right(last, state);
-		state.store_node(expr, AstNodeType::EXPR);
+		state.store_node(expr);
 
 		return tree_parse_token(ctx, walker, tree_expr_term2_handler, state);
 	}
@@ -138,7 +138,7 @@ bool tree_expr_term2_div(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& wal
 	if (tree_parse_token(ctx, walker, tree_expr_factor_handler, state))
 	{
 		expr->assign_right(last, state);
-		state.store_node(expr, AstNodeType::EXPR);
+		state.store_node(expr);
 
 		return tree_parse_token(ctx, walker, tree_expr_term2_handler, state);
 	}
@@ -173,7 +173,7 @@ bool tree_expr_factor_val(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& wa
 	SIOAstValue* val = new SIOAstValue();
 	val->val = walker.pop()->value;
 
-	state.store_node(val, AstNodeType::VALUE);
+	state.store_node(val);
 	return true;
 }
 

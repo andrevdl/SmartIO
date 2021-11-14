@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-#include "SIOTokenizer.h"
-#include "SIOParser.h"
-#include "Parser/sio_common.h"
+#include "parser/SIOTokenizer.h"
+#include "parser/SIOParser.h"
+#include "parser/tree/sio_tree.h"
 #include "internal/sio_context.h"
 #include "internal/sio_define.h"
 #include "internal/sio_memory.h"

@@ -1,7 +1,7 @@
 #include "SIOParser.h"
 
 // debug
-#include "parser/sio_debug_win.h"
+#include "sio_debug_win.h"
 
 SIOParser::SIOParser(SIOTokenizer* tokenizer) : walker(tokenizer)
 {

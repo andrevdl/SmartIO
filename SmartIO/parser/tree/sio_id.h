@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sio_common.h"
+#include "sio_tree.h"
 #include "sio_expr.h"
 
 bool tree_id(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state);

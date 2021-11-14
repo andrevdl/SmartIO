@@ -2,22 +2,17 @@
 
 #include <vector>
 
-#include "../../SIOTokens.h"
+#include "../SIOTokens.h"
 #include "../../debugger/SIODotDebugger.h"
 
 enum class AstNodeType
 {
-	EMPTY,
-	//PROGRAM,
-
 	LITERAL,
 	VALUE,
 	FUNCTION,
 	EXPR,
 	LOGIC_EXPR,
-	COMPARE_EXPR,
-
-	PLACEHOLDER // To keep everything for now happy
+	COMPARE_EXPR
 };
 
 class SIOAst
@@ -28,6 +23,7 @@ public:
 	SIOAst() : inverse(false) {}
 
 	virtual void print(SIODotDebugger* debugger) = 0;
+	virtual const AstNodeType get_type() = 0;
 };
 
 //class SIOAst
@@ -55,27 +51,18 @@ struct AstNodeState
 	AstNodeDebugInfo debug_info;
 #endif // SIO_DEBUG
 
-	AstNodeType type;
-	AstNodeType prev_type;
-
 	SIOAst* root_node = nullptr;
-	//SIOAst* prev_node = nullptr;
 	SIOAst* curr_node = nullptr;
 
 	string err;
 
-	void store_node(SIOAst* curr, AstNodeType new_type)
+	void store_node(SIOAst* curr)
 	{
 		if (root_node == nullptr)
 		{
 			root_node = curr;
 		}
-
-		//prev_node = curr_node;
 		curr_node = curr;
-
-		prev_type = type;
-		type = new_type;
 	}
 };
 
@@ -135,6 +122,11 @@ public:
 		}
 		debugger->close_node();
 	}
+
+	const AstNodeType get_type()
+	{
+		return AstNodeType::LOGIC_EXPR;
+	}
 };
 
 class SIOAstLogicCompare : public SIOAstBaseThreeWay
@@ -152,6 +144,11 @@ public:
 			right->print(debugger);
 		}
 		debugger->close_node();
+	}
+
+	const AstNodeType get_type()
+	{
+		return AstNodeType::COMPARE_EXPR;
 	}
 };
 
@@ -171,6 +168,11 @@ public:
 		}
 		debugger->close_node();
 	}
+
+	const AstNodeType get_type()
+	{
+		return AstNodeType::EXPR;
+	}
 };
 
 class SIOAstLiteral : public SIOAst
@@ -183,6 +185,11 @@ public:
 		debugger->create_node("Literal", to_string(val));
 		debugger->close_node();
 	}
+
+	const AstNodeType get_type()
+	{
+		return AstNodeType::LITERAL;
+	}
 };
 
 class SIOAstValue : public SIOAst
@@ -194,6 +201,11 @@ public:
 	{
 		debugger->create_node("Value", to_string(val));
 		debugger->close_node();
+	}
+
+	const AstNodeType get_type()
+	{
+		return AstNodeType::VALUE;
 	}
 };
 
@@ -225,5 +237,10 @@ public:
 			(*it)->print(debugger);
 		}
 		debugger->close_node();
+	}
+
+	const AstNodeType get_type()
+	{
+		return AstNodeType::FUNCTION;
 	}
 };

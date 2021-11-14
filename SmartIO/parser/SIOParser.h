@@ -1,11 +1,14 @@
 #pragma once
 
-#include "SIOCommon.h"
-#include "parser/ast/sio_ast.h"
-#include "Parser/sio_program.h"
+#include <string>
+
+#include "ast/sio_ast.h"
+#include "sio_program.h"
 #include "SIOTokenizer.h"
 #include "SIOTokenWalker.h"
-#include "internal/sio_context.h"
+#include "../internal/sio_context.h"
+
+using namespace std;
 
 class SIOParser
 {

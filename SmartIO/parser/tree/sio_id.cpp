@@ -7,7 +7,7 @@ bool tree_id(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNode
 	SIOAstLiteral* lit = new SIOAstLiteral();
 	lit->val = walker.pop()->value;
 
-	state.store_node(lit, AstNodeType::LITERAL);
+	state.store_node(lit);
 
 	return tree_parse_token(ctx, walker, tree_id2_handler, state);
 }
@@ -24,7 +24,7 @@ bool tree_id2_call(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, A
 
 			while (type != SIOTokenType::RPAR)
 			{
-				if (!tree_parse_token(ctx, walker, tree_expr_handler, state)) // TODO: replace handler by more general handler (instruction)
+				if (!tree_parse_token(ctx, walker, tree_expr_handler, state))
 				{
 					state.err = "Invalid parameter";
 					return false;
@@ -40,7 +40,7 @@ bool tree_id2_call(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, A
 				}
 			}
 
-			state.store_node(func, AstNodeType::FUNCTION);
+			state.store_node(func);
 			return type == SIOTokenType::RPAR;
 	
 			//FINISH_TREE_NODE(type == SIOTokenType::RPAR 

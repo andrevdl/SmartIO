@@ -1,7 +1,9 @@
 #pragma once
 
-#include "SIOCommon.h"
+#include <string>
 #include "SIOTokenizer.h"
+
+using namespace std;
 
 class SIOTokenWalker
 {

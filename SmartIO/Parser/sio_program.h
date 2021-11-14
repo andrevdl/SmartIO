@@ -1,11 +1,11 @@
 #pragma once
 
-#include "sio_common.h"
+#include "tree/sio_tree.h"
 
 // temp
-#include "sio_expr.h"
+#include "tree/sio_expr.h"
 //#include "sio_logic_expr.h"
-#include "sio_id.h"
+#include "tree/sio_id.h"
 
 #include "ast/sio_ast.h"
 

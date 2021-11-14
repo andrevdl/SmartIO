@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../SIOTokenWalker.h"
-#include "../internal/sio_context.h"
+#include "../../internal/sio_context.h"
 
-#include "ast/sio_ast.h"
+#include "../ast/sio_ast.h"
 
 typedef bool (*t_parse_tree_func)(SIOContext&, SIOTokenType /*Last token*/, SIOTokenWalker&, AstNodeState&);
 typedef bool (*t_parse_tree_handler)(SIOTokenType& type, bool&, t_parse_tree_func&, AstNodeState& state);
@@ -12,8 +12,6 @@ inline bool tree_parse_token(SIOContext& ctx, SIOTokenWalker& walker, t_parse_tr
 {
 	SIOTokenType type = walker.peek_type();
 	bool eat = false;
-
-	state.type = AstNodeType::EMPTY;
 
 	t_parse_tree_func func = nullptr;
 	if (handler(type, eat, func, state))

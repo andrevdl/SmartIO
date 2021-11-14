@@ -4,7 +4,8 @@
 #include <stack>
 #include <sstream>
 #include <string>
-#include "../SIOCommon.h"
+
+using namespace std;
 
 class SIODotDebugger
 {

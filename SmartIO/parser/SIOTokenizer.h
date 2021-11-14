@@ -2,12 +2,14 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 
-#include "SIOCommon.h"
-#include "SIOStream.h"
+#include "../SIOStream.h"
 #include "SIOTokens.h"
 
-#include "internal/sio_context.h"
+#include "../internal/sio_context.h"
+
+using namespace std;
 
 constexpr auto TOKENIZER_BUFFER_SIZE = 4096;
 
@@ -32,6 +34,8 @@ private:
 	bool parse_non_keyword(char c, string& error);
 
 	bool push_token(SIOToken* token);
+
+	const bool translate_literal_to_token(const SIODataType type, SIOTokenType& token_type);
 protected:
 	char get_and_move_char();
 	bool rollback(int i = 1);
