@@ -2,9 +2,9 @@
 
 #include <unordered_map>
 #include <string>
-#include "../debugger/SIODotDebugger.h"
+#include <debugger/sio_dot_debugger.h>
 
-#include "sio_data.h"
+#include <sio_data.h>
 
 using namespace std;
 

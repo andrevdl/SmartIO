@@ -1,4 +1,4 @@
-#include "SIOStream.h"
+#include "sio_stream.h"
 
 SIOStream::SIOStream(string file)
 {

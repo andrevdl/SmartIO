@@ -1,4 +1,7 @@
-#include "sio_id.h"
+#include "sio_dfa_id.h"
+
+#include <parser/ast/sio_ast_id.h>
+#include <parser/ast/sio_ast_terminal.h>
 
 bool tree_id(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state)
 {

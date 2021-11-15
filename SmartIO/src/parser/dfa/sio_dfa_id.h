@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sio_tree.h"
-#include "sio_expr.h"
+#include "sio_dfa_tree.h"
+#include "sio_dfa_expr.h"
 
 bool tree_id(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state);
 bool tree_id2_call(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state);

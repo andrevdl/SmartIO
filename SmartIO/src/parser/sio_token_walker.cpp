@@ -1,4 +1,4 @@
-#include "SIOTokenWalker.h"
+#include "sio_token_walker.h"
 
 inline SIOToken* SIOTokenWalker::_pop()
 {

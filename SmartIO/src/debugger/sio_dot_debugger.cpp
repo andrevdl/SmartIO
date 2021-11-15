@@ -1,4 +1,4 @@
-#include "SIODotDebugger.h"
+#include "sio_dot_debugger.h"
 
 uint64_t SIODotDebugger::get_uuid()
 {

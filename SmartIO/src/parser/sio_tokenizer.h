@@ -4,10 +4,10 @@
 #include <iostream>
 #include <string>
 
-#include "../SIOStream.h"
-#include "SIOTokens.h"
+#include <sio_stream.h>
+#include <parser/sio_tokens.h>
 
-#include "../internal/sio_context.h"
+#include <sio_context.h>
 
 using namespace std;
 

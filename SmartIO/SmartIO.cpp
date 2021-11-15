@@ -5,12 +5,14 @@
 
 #include <iostream>
 
-#include "parser/SIOTokenizer.h"
-#include "parser/SIOParser.h"
-#include "parser/tree/sio_tree.h"
-#include "internal/sio_context.h"
-#include "internal/sio_define.h"
-#include "internal/sio_memory.h"
+#include <parser/sio_tokenizer.h>
+#include <parser/sio_parser.h>
+#include <parser/dfa/sio_dfa_tree.h>
+#include <sio_context.h>
+#include <sio_define.h>
+#include <sio_memory.h>
+
+#include <compiler/sio_ast_walker.h>
 
 using namespace std;
 
@@ -50,18 +52,6 @@ int main()
 				cout << tokenizer << endl;
 
 				SIOParser parser(&tokenizer);
-				//SIONProgram* node = parser.parse(err);
-
-				//if (node != nullptr)
-				//{
-				//	cout << "parsing success" << endl << endl << dot_debugger();
-				//	//cout << "parsing success" << endl << endl << *node;
-				//}
-				//else
-				//{
-				//	cout << "parsing error" << endl << endl;
-				//}
-
 				if (parser.parse(*context, err))
 				{
 #ifdef SIO_DEBUG

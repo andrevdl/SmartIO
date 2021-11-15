@@ -1,12 +1,12 @@
 #pragma once
 
-#include "tree/sio_tree.h"
+#include <parser/dfa/sio_dfa_tree.h>
 
 // temp
-#include "tree/sio_expr.h"
+#include <parser/dfa/sio_dfa_expr.h>
 //#include "sio_logic_expr.h"
-#include "tree/sio_id.h"
+#include <parser/dfa/sio_dfa_id.h>
 
-#include "ast/sio_ast.h"
+#include <parser/ast/sio_ast.h>
 
 extern bool create_parse_tree(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state);

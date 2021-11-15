@@ -1,4 +1,7 @@
-#include "sio_expr.h"
+#include "sio_dfa_expr.h"
+
+#include <parser/ast/sio_ast_expr.h>
+#include <parser/ast/sio_ast_terminal.h>
 
 bool tree_expr_compare(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state)
 {
