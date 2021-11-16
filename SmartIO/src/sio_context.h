@@ -28,8 +28,9 @@ public:
 	SIOContext();
 	~SIOContext();
 
-	SIODataRef& store_str(string str);
-	bool load_str(uint64_t& i, string& str);
+	SIODataRef* store_str(string str);
+	bool load_str(uintptr_t ptr, string& str);
+	//bool load_str(uint64_t& i, string& str);
 
 	bool store_const(string str, SIOData data);
 	bool store_str_const(string str, char flags, string val);
@@ -37,7 +38,7 @@ public:
 	bool load_const(uint64_t& i, SIOData& data);
 	bool load_const_ref(string str, SIODataRef* ref);
 
-	SIODataRef& str_token_translate(string str, SIODataType& type);
+	SIODataRef* str_token_translate(string str, SIODataType& type);
 	bool allowed_as_literal(string str);
 	bool is_data_marker(string str);
 

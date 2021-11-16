@@ -52,7 +52,7 @@ int main()
 				cout << tokenizer << endl;
 
 				SIOParser parser(&tokenizer);
-				if (parser.parse(*context, err))
+				if (parser.parse(context, err))
 				{
 #ifdef SIO_DEBUG
 					cout << "parsing success" << endl << endl << *(context->get_dot_tree_debugger());

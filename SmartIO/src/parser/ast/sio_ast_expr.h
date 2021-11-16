@@ -6,16 +6,16 @@
 class SIOAstLogic : public SIOAstBaseTwoWay
 {
 public:
-	void print(SIODotDebugger* debugger)
+	void print(SIODotDebugger* debugger, SIOContext* ctx)
 	{
 		debugger->create_node("Logic", "test");
 		if (left != nullptr)
 		{
-			left->print(debugger);
+			left->print(debugger, ctx);
 		}
 		if (right != nullptr)
 		{
-			right->print(debugger);
+			right->print(debugger, ctx);
 		}
 		debugger->close_node();
 	}
@@ -29,16 +29,16 @@ public:
 class SIOAstLogicCompare : public SIOAstBaseTwoWay
 {
 public:
-	void print(SIODotDebugger* debugger)
+	void print(SIODotDebugger* debugger, SIOContext* ctx)
 	{
 		debugger->create_node("compare", "test");
 		if (left != nullptr)
 		{
-			left->print(debugger);
+			left->print(debugger, ctx);
 		}
 		if (right != nullptr)
 		{
-			right->print(debugger);
+			right->print(debugger, ctx);
 		}
 		debugger->close_node();
 	}
@@ -52,16 +52,16 @@ public:
 class SIOAstExpr : public SIOAstBaseTwoWay
 {
 public:
-	void print(SIODotDebugger* debugger)
+	void print(SIODotDebugger* debugger, SIOContext* ctx)
 	{
 		debugger->create_node("Expr", "test");
 		if (left != nullptr)
 		{
-			left->print(debugger);
+			left->print(debugger, ctx);
 		}
 		if (right != nullptr)
 		{
-			right->print(debugger);
+			right->print(debugger, ctx);
 		}
 		debugger->close_node();
 	}

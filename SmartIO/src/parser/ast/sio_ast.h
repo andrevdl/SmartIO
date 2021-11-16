@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include <sio_context.h>
 #include <parser/sio_tokens.h>
 #include <debugger/sio_dot_debugger.h>
 
@@ -9,7 +10,9 @@ enum class AstNodeType
 {
 	LITERAL,
 	VALUE,
+	ID,
 	FUNCTION,
+	ARRAY,
 	EXPR,
 	LOGIC_EXPR,
 	COMPARE_EXPR
@@ -22,7 +25,7 @@ public:
 
 	SIOAst() : inverse(false) {}
 
-	virtual void print(SIODotDebugger* debugger) = 0;
+	virtual void print(SIODotDebugger* debugger, SIOContext* ctx) = 0;
 	virtual const AstNodeType get_type() = 0;
 };
 
@@ -53,6 +56,7 @@ struct AstNodeState
 
 	SIOAst* root_node = nullptr;
 	SIOAst* curr_node = nullptr;
+	bool empty = true;
 
 	string err;
 

@@ -22,12 +22,12 @@ Factor'     -> <(> LogicExpr <)> | {num} | {name}
 
 ============= Indentifier =============
 
-Goal   -> Id
+Goal        -> Id
 
-Id    -> Symbol Id'
-Id'   -> {vector}Expr Arr Chain | {empty}
-Arr   -> {vector}Expr Arr Chain | {empty}
-Chain -> Id Chain | {empty}
+Id          -> {name} Id' Arr Chain
+Func        -> <(> {vector}Expr <)> | {empty}
+Arr         -> <[> {vector}Expr <]> Arr | {empty}
+Chain       -> <.> Id | {empty}
 
 ============= Statement =============
 

@@ -21,7 +21,6 @@ inline bool tree_parse_token(SIOContext& ctx, SIOTokenWalker& walker, t_parse_tr
 #ifdef SIO_DEBUG
 			ctx.get_dot_tree_debugger()->create_node(state.debug_info.debug_name, state.debug_info.debug_body);
 #endif
-
 			SIOTokenType last = eat ? walker.pop_type() : walker.peek_type();
 			if (!func(ctx, last, walker, state))
 			{
@@ -33,6 +32,7 @@ inline bool tree_parse_token(SIOContext& ctx, SIOTokenWalker& walker, t_parse_tr
 			ctx.get_dot_tree_debugger()->close_node();
 #endif
 		}
+		state.empty = func == nullptr;
 		return true;
 	}
 

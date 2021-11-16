@@ -5,9 +5,9 @@
 class SIOAstLiteral : public SIOAst
 {
 public:
-	int val; // debug
+	uintptr_t val; // debug
 
-	void print(SIODotDebugger* debugger)
+	void print(SIODotDebugger* debugger, SIOContext* ctx)
 	{
 		debugger->create_node("Literal", to_string(val));
 		debugger->close_node();
@@ -22,9 +22,9 @@ public:
 class SIOAstValue : public SIOAst
 {
 public:
-	int val; // debug
+	uintptr_t val; // debug
 
-	void print(SIODotDebugger* debugger)
+	void print(SIODotDebugger* debugger, SIOContext* ctx)
 	{
 		debugger->create_node("Value", to_string(val));
 		debugger->close_node();

@@ -46,13 +46,13 @@ SIOContext::~SIOContext()
 	// todo: destroy unordered_map -> refs
 }
 
-SIODataRef& SIOContext::store_str(string str)
+SIODataRef* SIOContext::store_str(string str)
 {
 	auto got = find(str);
 	if (got != refs.end())
 	{
 		got->second->ref_count++;
-		return *got->second;
+		return got->second;
 	}
 
 	strings.push_back(str);
@@ -60,14 +60,15 @@ SIODataRef& SIOContext::store_str(string str)
 	SIODataRef* ref = new SIODataRef{ SIODataRef::Type::STRING, strings.size() - 1, 1 };
 	refs.insert(make_pair(str, ref));
 
-	return *ref;
+	return ref;
 }
 
-bool SIOContext::load_str(uint64_t& i, string& str)
+bool SIOContext::load_str(uintptr_t ptr, string& str)
 {
-	if (i >= 0 && i < strings.size())
+	SIODataRef* ref = (SIODataRef*) ptr;
+	if (ref->ref >= 0 && ref->ref < strings.size())
 	{
-		str = strings[i];
+		str = strings[ref->ref];
 		return true;
 	}
 
@@ -97,7 +98,7 @@ bool SIOContext::store_const(string str, SIOData data)
 bool SIOContext::store_str_const(string str, char flags, string val)
 {
 	flags |= SIO_DATA_CONST;
-	return store_const(str, define_data_ptr(SIODataType::STRING, flags, (uintptr_t)&store_str(val)));
+	return store_const(str, define_data_ptr(SIODataType::STRING, flags, (uintptr_t)store_str(val)));
 }
 
 bool SIOContext::load_const(string str, SIOData& data)
@@ -132,7 +133,7 @@ bool SIOContext::load_const_ref(string str, SIODataRef* ref)
 	return false;
 }
 
-SIODataRef& SIOContext::str_token_translate(string str, SIODataType& type)
+SIODataRef* SIOContext::str_token_translate(string str, SIODataType& type)
 {
 	SIOData data;
 	SIODataRef* ref = nullptr;
@@ -142,7 +143,7 @@ SIODataRef& SIOContext::str_token_translate(string str, SIODataType& type)
 		if (BIT_NOT_SET(data.flags, SIO_DATA_MARKER))
 		{
 			type = data.datatype;
-			return *ref;
+			return ref;
 
 		}
 	}

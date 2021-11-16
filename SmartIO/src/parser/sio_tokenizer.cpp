@@ -308,7 +308,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '"')
 		{
 			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, (uintptr_t)&ctx->store_str(get_str_buffer()));
+			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, (uintptr_t)ctx->store_str(get_str_buffer()));
 		}
 		
 		return false;
@@ -328,7 +328,7 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '\'')
 		{
 			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, (uintptr_t)&ctx->store_str(get_str_buffer()));
+			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, (uintptr_t)ctx->store_str(get_str_buffer()));
 		}
 
 		return false;
@@ -394,16 +394,16 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 		}
 
 		SIODataType data_type;
-		SIODataRef ref = ctx->str_token_translate(get_str_buffer(), data_type);
+		SIODataRef* ref = ctx->str_token_translate(get_str_buffer(), data_type);
 		
 		// Const folding
 		SIOTokenType token_type;
-		if (ref.type == SIODataRef::Type::LITERAL && translate_literal_to_token(data_type, token_type))
+		if (ref->type == SIODataRef::Type::LITERAL && translate_literal_to_token(data_type, token_type))
 		{
-			return PUSH_TOKEN_VAL(token_type, (uintptr_t)&ref);
+			return PUSH_TOKEN_VAL(token_type, (uintptr_t)ref);
 		}
 
-		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, (uintptr_t)&ref);
+		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, (uintptr_t)ref);
 	}
 
 	return false;
