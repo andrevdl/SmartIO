@@ -49,7 +49,7 @@ struct SIODataRef
 	uint64_t ref_count;
 };
 
-inline uint64_t get_ref(uint64_t value)
+inline uint64_t get_ref(uintptr_t value)
 {
 	return ((SIODataRef*)value)->ref;
 }
@@ -76,6 +76,16 @@ inline SIOData define_data_dbl(SIODataType datatype, char flags, long double val
 	SIOData data = { datatype, flags };
 	data.val.dbl = value;
 	return data;
+}
+
+inline SIOData define_data_ref(SIODataType datatype, char flags, SIODataRef* ref)
+{
+	return define_data_ptr(datatype, flags, (uintptr_t) ref);
+}
+
+inline SIOData define_data_void()
+{
+	return { SIODataType::VOID, 0, 0 };
 }
 
 inline bool is_nummeric_data(SIODataType type)

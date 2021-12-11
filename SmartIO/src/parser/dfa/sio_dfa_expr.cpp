@@ -339,12 +339,10 @@ bool tree_expr_factor2_handler(SIOTokenType& type, bool& eat, t_parse_tree_func&
 	case SIOTokenType::LPAR:
 		SIO_TREE_DEBUG_INFO("ExprFactor", "Nested");
 		eat = true;
-		type = SIOTokenType::NESTED;
 		func = tree_expr_factor_nested;
 		return true;
 	case SIOTokenType::VALUE:
 		SIO_TREE_DEBUG_INFO("ExprFactor", "Value");
-		type = SIOTokenType::SYMBOL;
 		func = tree_expr_factor_val;
 		return true;
 	case SIOTokenType::IDENTIFIER:

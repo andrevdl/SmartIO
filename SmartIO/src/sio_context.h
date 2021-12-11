@@ -24,13 +24,17 @@ private:
 	vector<SIOData> consts;
 
 	unordered_map<string, SIODataRef*>::iterator find(string str);
+
+	bool is_valid_str_index(size_t index);
 public:
 	SIOContext();
 	~SIOContext();
 
 	SIODataRef* store_str(string str);
 	bool load_str(uintptr_t ptr, string& str);
-	//bool load_str(uint64_t& i, string& str);
+	bool load_str(SIOData& data, string& str);
+
+	const char* load_str_as_c_char(SIOData& data);
 
 	bool store_const(string str, SIOData data);
 	bool store_str_const(string str, char flags, string val);

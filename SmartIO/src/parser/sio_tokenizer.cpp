@@ -90,6 +90,30 @@ bool SIOTokenizer::parse(string& error)
 			}
 		}
 	}
+
+	else if (compare_and_trap(c, 'w', trap))
+	{
+		c = get_and_move_char();
+		if (compare_and_trap(c, 'h', trap))
+		{
+			c = get_and_move_char();
+			if (compare_and_trap(c, 'i', trap))
+			{
+				c = get_and_move_char();
+				if (compare_and_trap(c, 'l', trap))
+				{
+					c = get_and_move_char();
+					if (compare_and_trap(c, 'e', trap))
+					{
+						if (is_token_end())
+						{
+							return PUSH_TOKEN(SIOTokenType::WHILE);
+						}
+					}
+				}
+			}
+		}
+	}
 	else if (c == '.')
 	{
 		return PUSH_TOKEN(SIOTokenType::DOT);

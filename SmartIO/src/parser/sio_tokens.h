@@ -2,12 +2,7 @@
 
 enum class SIOTokenType
 {
-	// Parser flow
-	EMPTY,	
-	NESTED,
-	SYMBOL,
-	CALL,
-	ARRAY,
+	EMPTY,
 
 	// Symbol types
 	IDENTIFIER,
@@ -19,9 +14,8 @@ enum class SIOTokenType
 	// Keywords
 	IF,
 	ELSE,
+	WHILE,
 	VAR,
-
-	// true, false, null
 
 	// update
 	// block

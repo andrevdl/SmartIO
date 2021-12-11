@@ -30,3 +30,17 @@ bool SIONonTerminalNode::parse_leaf(SIOTokenWalker& walker, SIONSymbol* target)
 	
 	return false;
 }
+
+	SIOSet bit_array;
+
+	bit_array.set_bit(240);
+	bool xy = bit_array.get_bit(240);
+
+	///////////////
+
+	//string text = "(0)==(2)==3"; // should throw an error
+	//string text = "(4 == 5) == 7"; // should work
+	//string text = "(2 / (5 - 4) - x(y[n][r] + j(o)[u], z + p + q().m)) == 99"; // == 99 is missing in the tree
+	//string text = "5 && (2 == ((3 + 4) + 7))";
+
+	// mod: (2 / (5 - 4) - x().m) == 99

@@ -3,8 +3,6 @@
 #include "sio_dfa_tree.h"
 #include "sio_dfa_id.h"
 
-
-
 // visitors
 bool tree_expr_compare(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state);
 bool tree_expr_compare_eq(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state);

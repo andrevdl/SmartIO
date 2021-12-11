@@ -190,7 +190,7 @@ bool tree_id_func_handler(SIOTokenType& type, bool& eat, t_parse_tree_func& func
 	case SIOTokenType::LPAR:
 		SIO_TREE_DEBUG_INFO("Parameters", "");
 		eat = true;
-		type = SIOTokenType::CALL;
+		//type = SIOTokenType::CALL;
 		func = tree_id_func;
 		break;
 	}
@@ -205,7 +205,7 @@ bool tree_id_array_handler(SIOTokenType& type, bool& eat, t_parse_tree_func& fun
 	case SIOTokenType::LBR:
 		SIO_TREE_DEBUG_INFO("Indices", "");
 		eat = true;
-		type = SIOTokenType::ARRAY;
+		//type = SIOTokenType::ARRAY;
 		func = tree_id_array;
 		break;
 	}

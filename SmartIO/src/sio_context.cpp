@@ -5,6 +5,11 @@ unordered_map<string, SIODataRef*>::iterator SIOContext::find(string str)
 	return refs.find(str);
 }
 
+bool SIOContext::is_valid_str_index(size_t index)
+{
+	return index >= 0 && index < strings.size();
+}
+
 SIOContext::SIOContext()
 {
 #ifdef SIO_DEBUG
@@ -65,14 +70,36 @@ SIODataRef* SIOContext::store_str(string str)
 
 bool SIOContext::load_str(uintptr_t ptr, string& str)
 {
-	SIODataRef* ref = (SIODataRef*) ptr;
-	if (ref->ref >= 0 && ref->ref < strings.size())
+	uint64_t ref = get_ref(ptr);
+	if (is_valid_str_index(ref))
 	{
-		str = strings[ref->ref];
+		str = strings[ref];
 		return true;
 	}
 
 	return false;
+}
+
+bool SIOContext::load_str(SIOData& data, string& str)
+{
+	uint64_t ref = get_ref(data);
+	if (is_valid_str_index(ref))
+	{
+		str = strings[ref];
+		return true;
+	}
+
+	return false;
+}
+
+const char* SIOContext::load_str_as_c_char(SIOData& data)
+{
+	uint64_t ref = get_ref(data);
+	if (is_valid_str_index(ref))
+	{
+		return strings[ref].c_str();
+	}
+	return nullptr;
 }
 
 bool SIOContext::store_const(string str, SIOData data)
