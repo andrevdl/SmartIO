@@ -1,10 +1,28 @@
 #include "sio_stream.h"
 
+char SIOStream::_get_char(int pos)
+{
+	char c = my_str[pos];
+	if (c == '\n')
+	{
+		update_ln_pos();
+	}
+	else
+	{
+		update_col_pos();
+	}
+
+	return c;
+}
+
 SIOStream::SIOStream(string file)
 {
 	my_str = file;
 	my_str_index = 0;
 
+	bookmark_ln = 1;
+	bookmark_col = 0;
+	
 	bookmark_pos = 0;
 }
 
@@ -15,7 +33,7 @@ char SIOStream::get_char()
 		return 0;
 	}
 
-	return my_str[my_str_index];
+	return _get_char(my_str_index);
 }
 
 char SIOStream::get_and_move_char()
@@ -25,7 +43,7 @@ char SIOStream::get_and_move_char()
 		return 0;
 	}
 
-	return my_str[my_str_index++];
+	return _get_char(my_str_index++);
 }
 
 bool SIOStream::skip_char(int i)
@@ -43,6 +61,8 @@ bool SIOStream::bookmark()
 {
 	if (my_str_index >= 0 && my_str_index < my_str.length())
 	{
+		bookmark_ln = get_ln_pos();
+		bookmark_col = get_col_pos();
 		bookmark_pos = my_str_index;
 		return true;
 	}
@@ -52,6 +72,7 @@ bool SIOStream::bookmark()
 void SIOStream::restore_bookmark()
 {
 	rollback(my_str_index - bookmark_pos);
+	set_pos_info(bookmark_ln, bookmark_col);
 }
 
 bool SIOStream::compare_and_trap(const char c, const char check, bool& trap)

@@ -3,12 +3,12 @@
 // debug
 #include "sio_debug_win.h"
 
-SIOParser::SIOParser(SIOTokenizer* tokenizer) : walker(tokenizer)
+SIOParser::SIOParser(SIOTokenizer* tokenizer, SIOLogger* logger) : walker(tokenizer), logger(logger)
 {
 	
 }
 
-bool SIOParser::parse(SIOContext* ctx, string& error)
+bool SIOParser::parse(SIOContext* ctx)
 {
 	//bool success = true;
 	//SIONProgram* program = new SIONProgram(nullptr);
@@ -21,8 +21,11 @@ bool SIOParser::parse(SIOContext* ctx, string& error)
 	AstNodeState* state = new AstNodeState();
 	bool r = tree_parse_token(*ctx, walker, tree_expr_handler, *state);
 
-	state->root_node->print(ctx->get_dot_ast_debugger(), ctx);
-	set_clipboard(ctx->get_dot_ast_debugger()->str());
+	if (state->root_node != nullptr)
+	{
+		state->root_node->print(ctx->get_dot_ast_debugger(), ctx);
+		set_clipboard(ctx->get_dot_ast_debugger()->str());
+	}
 
 	return r;
 

@@ -81,6 +81,8 @@ struct SIOToken
 {
 	SIOTokenType type;
 	uint64_t value;
+	
+	int start_ln, start_col, end_ln, end_col;
 };
 
 //inline const char* token_type_str(const SIOTokenType& type)

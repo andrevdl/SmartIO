@@ -13,13 +13,11 @@ using namespace std;
 
 constexpr auto TOKENIZER_BUFFER_SIZE = 4096;
 
-#define PUSH_TOKEN_VAL(t, v) push_token(new SIOToken{ t, v })
-#define PUSH_TOKEN(t) PUSH_TOKEN_VAL(t, 0)
-
 class SIOTokenizer : SIOStream
 {
 private:
 	SIOContext* ctx;
+	SIOLogger* logger;
 
 	char* str_buffer;
 	short str_buffer_i;
@@ -30,10 +28,12 @@ private:
 	const char* get_str_buffer();
 	void flush_str_cache();
 
-	bool parse(string& error);
-	bool parse_non_keyword(char c, string& error);
+	bool parse();
+	bool parse_non_keyword(char c);
+	bool parse_str(char c, SIOTokenType type, char qoute);
 
-	bool push_token(SIOToken* token);
+	bool push_token(SIOTokenType type);
+	bool push_token(SIOTokenType type, uint64_t value, int start_ln, int start_col);
 
 	const bool translate_literal_to_token(const SIODataType type, SIOTokenType& token_type);
 protected:
@@ -41,10 +41,10 @@ protected:
 	bool rollback(int i = 1);
 	bool rollback_str_buffer(int i = 1);
 public:
-	SIOTokenizer(string file, SIOContext* ctx);
+	SIOTokenizer(string file, SIOContext* ctx, SIOLogger* logger);
 	~SIOTokenizer();
 
-	bool tokenize(string& error);
+	bool tokenize();
 
 	vector<SIOToken*>::iterator begin();
 	vector<SIOToken*>::iterator end();

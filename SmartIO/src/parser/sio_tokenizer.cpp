@@ -1,5 +1,7 @@
 #include "sio_tokenizer.h"
 
+#include <sio_message.h>
+
 const char SIOTokenizer::cache_char(const char c)
 {
 	if (c == 0 || str_buffer_i < 0 || str_buffer_i >= TOKENIZER_BUFFER_SIZE - 1)
@@ -23,7 +25,7 @@ void SIOTokenizer::flush_str_cache()
 	str_buffer_i = 0;
 }
 
-bool SIOTokenizer::parse(string& error)
+bool SIOTokenizer::parse()
 {
 	bookmark();
 	char c = get_and_move_char();
@@ -43,7 +45,7 @@ bool SIOTokenizer::parse(string& error)
 			{
 				if (is_token_end())
 				{
-					return PUSH_TOKEN(SIOTokenType::IO_ADD);
+					return push_token(SIOTokenType::IO_ADD);
 				}
 			}
 		}
@@ -59,7 +61,7 @@ bool SIOTokenizer::parse(string& error)
 				c = get_and_move_char();
 				if (compare_and_trap(c, 'e', trap))
 				{
-					return PUSH_TOKEN(SIOTokenType::ELSE);
+					return push_token(SIOTokenType::ELSE);
 				}
 			}
 		}
@@ -71,7 +73,7 @@ bool SIOTokenizer::parse(string& error)
 		{
 			if (is_token_end())
 			{
-				return PUSH_TOKEN(SIOTokenType::IF);
+				return push_token(SIOTokenType::IF);
 			}
 		}
 	}
@@ -85,7 +87,7 @@ bool SIOTokenizer::parse(string& error)
 			{
 				if (is_token_end())
 				{
-					return PUSH_TOKEN(SIOTokenType::VAR);
+					return push_token(SIOTokenType::VAR);
 				}
 			}
 		}
@@ -107,7 +109,7 @@ bool SIOTokenizer::parse(string& error)
 					{
 						if (is_token_end())
 						{
-							return PUSH_TOKEN(SIOTokenType::WHILE);
+							return push_token(SIOTokenType::WHILE);
 						}
 					}
 				}
@@ -116,48 +118,48 @@ bool SIOTokenizer::parse(string& error)
 	}
 	else if (c == '.')
 	{
-		return PUSH_TOKEN(SIOTokenType::DOT);
+		return push_token(SIOTokenType::DOT);
 	}
 	else if (c == ',')
 	{
-		return PUSH_TOKEN(SIOTokenType::COMMA);
+		return push_token(SIOTokenType::COMMA);
 	}
 	else if (c == ':')
 	{
 		if (get_char() == ':')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::DCOLON);
+			return push_token(SIOTokenType::DCOLON);
 		}
-		return PUSH_TOKEN(SIOTokenType::COLON);
+		return push_token(SIOTokenType::COLON);
 	}
 	else if (c == ';')
 	{
-		return PUSH_TOKEN(SIOTokenType::SEMICOLON);
+		return push_token(SIOTokenType::SEMICOLON);
 	}
 	else if (c == '(')
 	{
-		return PUSH_TOKEN(SIOTokenType::LPAR);
+		return push_token(SIOTokenType::LPAR);
 	}
 	else if (c == ')')
 	{
-		return PUSH_TOKEN(SIOTokenType::RPAR);
+		return push_token(SIOTokenType::RPAR);
 	} 
 	else if (c == '[')
 	{
-		return PUSH_TOKEN(SIOTokenType::LBR);
+		return push_token(SIOTokenType::LBR);
 	}
 	else if (c == ']')
 	{
-		return PUSH_TOKEN(SIOTokenType::RBR);
+		return push_token(SIOTokenType::RBR);
 	}
 	else if (c == '{')
 	{
-		return PUSH_TOKEN(SIOTokenType::LCURL);
+		return push_token(SIOTokenType::LCURL);
 	}
 	else if (c == '}')
 	{
-		return PUSH_TOKEN(SIOTokenType::RCURL);
+		return push_token(SIOTokenType::RCURL);
 	}
 	else if (c == '<')
 	{	
@@ -165,44 +167,45 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '>')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::LOGIC_UNEQUAL);
+			return push_token(SIOTokenType::LOGIC_UNEQUAL);
 		}
 		else if (c == '=')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::LOGIC_SMALLER_EQUAL);
+			return push_token(SIOTokenType::LOGIC_SMALLER_EQUAL);
 		}
-		return PUSH_TOKEN(SIOTokenType::SMALLER);
+		return push_token(SIOTokenType::SMALLER);
 	}
 	else if (c == '>')
 	{
 		if (get_char() == '=')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::LOGIC_GREATER_EQUAL);
+			return push_token(SIOTokenType::LOGIC_GREATER_EQUAL);
 		}
-		return PUSH_TOKEN(SIOTokenType::LARGER);
+		return push_token(SIOTokenType::LARGER);
 	}
 	else if (c == '$')
 	{
-		return PUSH_TOKEN(SIOTokenType::DOLLAR);
+		return push_token(SIOTokenType::DOLLAR);
 	}
 	else if (c == '\\')
 	{
-		return PUSH_TOKEN(SIOTokenType::BSLASH);
+		return push_token(SIOTokenType::BSLASH);
 	}
 	else if (c == '#')
 	{
-		return PUSH_TOKEN(SIOTokenType::HASH);
+		return push_token(SIOTokenType::HASH);
 	}
 	else if (c == '&')
 	{
 		c = get_and_move_char();
 		if (c == '&')
 		{
-			return PUSH_TOKEN(SIOTokenType::AND);
+			return push_token(SIOTokenType::AND);
 		}
 
+		logger->log_error(ERROR_INVALID_TOKEN, this);
 		return false;
 	}
 	else if (c == '|')
@@ -210,32 +213,33 @@ bool SIOTokenizer::parse(string& error)
 		c = get_and_move_char();
 		if (c == '|')
 		{
-			return PUSH_TOKEN(SIOTokenType::OR);
+			return push_token(SIOTokenType::OR);
 		}
 
+		logger->log_error(ERROR_INVALID_TOKEN, this);
 		return false;
 	}
 	else if (c == '%')
 	{
-		return PUSH_TOKEN(SIOTokenType::MODULO);
+		return push_token(SIOTokenType::MODULO);
 	}
 	else if (c == '!')
 	{
 		if (get_char() == '=')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::LOGIC_UNEQUAL);
+			return push_token(SIOTokenType::LOGIC_UNEQUAL);
 		}
-		return PUSH_TOKEN(SIOTokenType::NOT);
+		return push_token(SIOTokenType::NOT);
 	}
 	else if (c == '=')
 	{
 		if (get_char() == '=')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::LOGIC_EQUAL);
+			return push_token(SIOTokenType::LOGIC_EQUAL);
 		}
-		return PUSH_TOKEN(SIOTokenType::ASSIGN);
+		return push_token(SIOTokenType::ASSIGN);
 	}
 	else if (c == '+')
 	{
@@ -243,14 +247,14 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '=')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::ASSIGN_ADD);
+			return push_token(SIOTokenType::ASSIGN_ADD);
 		}
 		else if (c == '+')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::INC);
+			return push_token(SIOTokenType::INC);
 		}
-		return PUSH_TOKEN(SIOTokenType::ADD);
+		return push_token(SIOTokenType::ADD);
 	}
 	else if (c == '-')
 	{
@@ -258,23 +262,23 @@ bool SIOTokenizer::parse(string& error)
 		if (c == '=')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::ASSIGN_MIN);
+			return push_token(SIOTokenType::ASSIGN_MIN);
 		}
 		else if (c == '-')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::DEC);
+			return push_token(SIOTokenType::DEC);
 		}
-		return PUSH_TOKEN(SIOTokenType::MIN);
+		return push_token(SIOTokenType::MIN);
 	}
 	else if (c == '*')
 	{
 		if (get_char() == '=')
 		{
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::ASSIGN_STAR);
+			return push_token(SIOTokenType::ASSIGN_STAR);
 		}
-		return PUSH_TOKEN(SIOTokenType::STAR);
+		return push_token(SIOTokenType::STAR);
 	}
 	else if (c == '/')
 	{
@@ -313,49 +317,17 @@ bool SIOTokenizer::parse(string& error)
 		}
 		else if (c == '=') {
 			skip_char();
-			return PUSH_TOKEN(SIOTokenType::ASSIGN_SLASH);
+			return push_token(SIOTokenType::ASSIGN_SLASH);
 		}
-		return PUSH_TOKEN(SIOTokenType::SLASH);
+		return push_token(SIOTokenType::SLASH);
 	}
 	else if (c == '"')
 	{
-		flush_str_cache();
-
-		char p = 0;
-		c = get_and_move_char();
-		while (c != '"' || p == '\\')
-		{
-			p = c;
-			c = get_and_move_char();
-		}
-
-		if (c == '"')
-		{
-			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::DSTRING, (uintptr_t)ctx->store_str(get_str_buffer()));
-		}
-		
-		return false;
+		return parse_str(c, SIOTokenType::DSTRING, '"');
 	}
 	else if (c == '\'')
 	{
-		flush_str_cache();
-
-		char p = 0;
-		c = get_and_move_char();
-		while (c != '\'' || p == '\\')
-		{
-			p = c;
-			c = get_and_move_char();
-		}
-
-		if (c == '\'')
-		{
-			rollback_str_buffer();
-			return PUSH_TOKEN_VAL(SIOTokenType::SSTRING, (uintptr_t)ctx->store_str(get_str_buffer()));
-		}
-
-		return false;
+		return parse_str(c, SIOTokenType::SSTRING, '\'');
 	}
 
 	if (trap)
@@ -364,11 +336,14 @@ bool SIOTokenizer::parse(string& error)
 		c = get_and_move_char();
 	}
 
-	return parse_non_keyword(c, error);
+	return parse_non_keyword(c);
 }
 
-bool SIOTokenizer::parse_non_keyword(char c, string& error)
+bool SIOTokenizer::parse_non_keyword(char c)
 {
+	int ln = get_ln_pos();
+	int col = get_col_pos();
+
 	if (isdigit(c))
 	{
 		c = get_and_move_char();
@@ -387,6 +362,7 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 		}
 		else if (c != 0)
 		{
+			logger->log_error(ERROR_NUMBER_EXPECTED, this);
 			return false;
 		}
 
@@ -394,7 +370,13 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 		char* end = 0;
 
 		uint64_t val = strtoll(get_str_buffer(), &end, 10);
-		return errno == 0 && *end == 0 && PUSH_TOKEN_VAL(SIOTokenType::VALUE, val);
+		if (errno == 0 && *end == 0)
+		{
+			return push_token(SIOTokenType::VALUE, val, ln, col);
+		}
+
+		logger->log_error(ERROR_INVALID_NUMBER_FORMAT, this);
+		return false;
 	}
 	else if (isalpha(c))
 	{
@@ -414,6 +396,7 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 		}
 		else if (c != 0)
 		{
+			logger->log_error(ERROR_INVALID_TOKEN, this);
 			return false;
 		}
 
@@ -424,19 +407,56 @@ bool SIOTokenizer::parse_non_keyword(char c, string& error)
 		SIOTokenType token_type;
 		if (ref->type == SIODataRef::Type::LITERAL && translate_literal_to_token(data_type, token_type))
 		{
-			return PUSH_TOKEN_VAL(token_type, (uintptr_t)ref);
+			return push_token(token_type, (uintptr_t)ref, ln, col);
 		}
 
-		return PUSH_TOKEN_VAL(SIOTokenType::IDENTIFIER, (uintptr_t)ref);
+		return push_token(SIOTokenType::IDENTIFIER, (uintptr_t)ref, ln, col);
 	}
 
+	logger->log_error(ERROR_INVALID_TOKEN, this);
 	return false;
 }
 
-bool SIOTokenizer::push_token(SIOToken* token)
+bool SIOTokenizer::parse_str(char c, SIOTokenType type, char qoute)
 {
-	tokens.push_back(token);
+	flush_str_cache();
 
+	int ln = get_ln_pos();
+	int col = get_col_pos();
+
+	char p = 0;
+	c = get_and_move_char();
+	while ((c != qoute || p == '\\') && c != 0)
+	{
+		p = c;
+		c = get_and_move_char();
+	}
+
+	if (c == qoute)
+	{
+		rollback_str_buffer();
+		return push_token(type, (uintptr_t)ctx->store_str(get_str_buffer()), ln, col);
+	}
+
+	logger->log_error(ERRROR_UNCLOSED_STRING, this);
+	return false;
+}
+
+bool SIOTokenizer::push_token(SIOTokenType type)
+{
+	int ln = get_ln_pos();
+	int col = get_col_pos();
+
+	tokens.push_back(new SIOToken{ type, 0, ln, col, ln, col });
+	return true;
+}
+
+bool SIOTokenizer::push_token(SIOTokenType type, uint64_t value, int start_ln, int start_col)
+{
+	int ln = get_ln_pos();
+	int col = get_col_pos();
+
+	tokens.push_back(new SIOToken{ type, value, start_ln, start_col, ln, col });
 	return true;
 }
 
@@ -474,7 +494,7 @@ bool SIOTokenizer::rollback_str_buffer(int i)
 	return str_buffer_i > -1;
 }
 
-SIOTokenizer::SIOTokenizer(string file, SIOContext* ctx) : ctx(ctx), SIOStream(file)
+SIOTokenizer::SIOTokenizer(string file, SIOContext* ctx, SIOLogger* logger) : ctx(ctx), logger(logger), SIOStream(file)
 {
 	str_buffer = new char[TOKENIZER_BUFFER_SIZE];
 	str_buffer_i = 0;
@@ -485,15 +505,24 @@ SIOTokenizer::~SIOTokenizer()
 	delete[] str_buffer;
 }
 
-bool SIOTokenizer::tokenize(string& error)
+bool SIOTokenizer::tokenize()
 {
 	str_buffer_i = 0;
 
 	bool state = true;
 	while (state && !done())
 	{
-		state = parse(error);
+		state = parse();
 		flush_str_cache();
+	}
+
+	if (state)
+	{
+		logger->log_success(INFO_PARSE_BUILD_SUCCES);
+	}
+	else
+	{
+		logger->log_error(ERROR_PARSE_BUILD_FAILED);
 	}
 
 	return state;

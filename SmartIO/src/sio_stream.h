@@ -1,16 +1,20 @@
 #pragma once
 
 #include <string>
+#include <sio_log.h>
 
 using namespace std;
 
-class SIOStream
+class SIOStream : public SIOPosInfo
 {
 private:
 	string my_str;
 	int my_str_index;
 
 	int bookmark_pos;
+	int bookmark_ln, bookmark_col;
+
+	char _get_char(int pos);
 public:
 	SIOStream(string file);
 protected:
