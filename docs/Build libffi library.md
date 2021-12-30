@@ -19,9 +19,9 @@
   - Execute the following command and replacing {MY_CYGWIN_PATH} by the noted cygwin path from step 3 (code is for x64):  ``c:\cygwin64\bin\sh -lc "(cd $OLDPWD; ./configure CC='{MY_CYGWIN_PATH}/msvcc.sh -m64' CXX='{MY_CYGWIN_PATH}/msvcc.sh -m64' LD='link' CPP='cl -nologo -EP' CXXCPP='cl -nologo -EP' CPPFLAGS='-DFFI_BUILDING_DLL' NM='dumpbin -symbols' STRIP=':' --build='x86_64-w64-cygwin' --host='x86_64-w64-cygwin' --disable-debug --enable-shared --disable-static --disable-dependency-tracking)"``
   - ``c:\cygwin64\bin\sh -lc "(cd $OLDPWD; make)"``
 - Step 7: Copy the artifacts from this proces into the SmartIO project
-  - All c/c++ headers from [unpacked folder]/x86_64-w64-cygwin\include to [source location]\SmartIO\SmartIO\libs\libffi\includes
-  - libffi-{version}.lib from [unpacked folder]/x86_64-w64-cygwin\\.libs to [source location]\SmartIO\SmartIO\libs\libffi
-  - libffi-{version}.dll from [unpacked folder]/x86_64-w64-cygwin\\.libs to [source location]\SmartIO\SmartIO\libs\libffi
+  - All c/c++ headers from [unpacked folder]/x86_64-w64-cygwin\include to [source location]\SmartIO\libs\libffi\includes
+  - libffi-{version}.lib from [unpacked folder]/x86_64-w64-cygwin\\.libs to [source location]\SmartIO\libs\libffi
+  - libffi-{version}.dll from [unpacked folder]/x86_64-w64-cygwin\\.libs to [source location]\SmartIO\libs\libffi
 - Step 8: We are done and we can delete the unpacked and download folder
 
 ## Possible adjustments
