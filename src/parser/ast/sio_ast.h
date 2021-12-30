@@ -50,8 +50,8 @@ public:
 #ifdef SIO_DEBUG
 struct AstNodeDebugInfo
 {
-	char* debug_name;
-	char* debug_body;
+	const char* debug_name;
+	const char* debug_body;
 };
 #endif // SIO_DEBUG
 

@@ -24,15 +24,16 @@
 #include <runtime/sio_vm.h>
 #include <runtime/sio_native.h>
 
+#include <util/sio_arg_parser.h>
+
 using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
-	//SIOContext* context = new SIOContext();
 
-	//sio_native_example_dynamic();
-	//sio_native_testing(context);
-	//sio_vm_exec();
+
+	return 0;
+
 
 	SIOLogger* logger = new SIOConsoleLogger();
 	SIOContext* context = new SIOContext(logger);
@@ -62,11 +63,6 @@ int main()
 					cout << endl << *(context->get_dot_tree_debugger());
 #endif // SIO_DEBUG
 				}
-				else
-				{
-					cout << "parsing error" << endl << endl;
-				}
-
 			}
 		}
 

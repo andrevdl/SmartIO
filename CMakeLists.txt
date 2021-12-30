@@ -7,6 +7,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DSIO_DEBUG")
 # Add all source code to the project
 file(GLOB SmartIO_Src
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/util/*.cpp"
 
 	# Parser
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/parser/*.cpp"
@@ -33,6 +34,8 @@ set_target_properties(libffi PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE
 # Add source to this project's executable.
 add_executable (SmartIO "SmartIO.cpp" "SmartIO.h" ${SmartIO_Src})
 target_include_directories(SmartIO PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+target_compile_features(SmartIO PUBLIC cxx_std_23)
 
 # Link libffi
 target_link_libraries(SmartIO libffi)

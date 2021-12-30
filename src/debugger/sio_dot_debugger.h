@@ -26,17 +26,17 @@ private:
 	uint64_t get_uuid();
 
 	template <typename T>
-	void store_node_data(uint64_t uuid, char* name, T body);
+	void store_node_data(uint64_t uuid, const char* name, T body);
 
 	void store_link(uint64_t uuid);
 public:
 	friend ostream& operator<<(ostream& os, const SIODotDebugger& debugger);
 
 	template <typename T>
-	uint64_t create_node(char* name, T body);
+	uint64_t create_node(const char* name, T body);
 
 	template <typename T>
-	void create_and_close_node(char* name, T body);
+	void create_and_close_node(const char* name, T body);
 
 	void close_node();
 
@@ -47,7 +47,7 @@ public:
 };
 
 template<typename T>
-inline void SIODotDebugger::store_node_data(uint64_t uuid, char* name, T body)
+inline void SIODotDebugger::store_node_data(uint64_t uuid, const char* name, T body)
 {
 	buffer << uuid << "[shape=record label=\"{" << name << "|";
 	buffer << body;
@@ -55,7 +55,7 @@ inline void SIODotDebugger::store_node_data(uint64_t uuid, char* name, T body)
 }
 
 template<typename T>
-inline uint64_t SIODotDebugger::create_node(char* name, T body)
+inline uint64_t SIODotDebugger::create_node(const char* name, T body)
 {
 	uint64_t uuid = get_uuid();
 	store_node_data(uuid, name, body);
@@ -66,7 +66,7 @@ inline uint64_t SIODotDebugger::create_node(char* name, T body)
 }
 
 template<typename T>
-inline void SIODotDebugger::create_and_close_node(char* name, T body)
+inline void SIODotDebugger::create_and_close_node(const char* name, T body)
 {
 	uint64_t uuid = get_uuid();
 	store_node_data(uuid, name, body);

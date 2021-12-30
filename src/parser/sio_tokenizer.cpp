@@ -547,7 +547,7 @@ vector<SIOToken*>::iterator SIOTokenizer::end()
 
 ostream& operator<<(ostream& os, const SIOTokenizer& tokenizer)
 {
-	for each (SIOToken* token in tokenizer.tokens)
+	for (SIOToken* token : tokenizer.tokens)
 	{
 		os << "type:\t" << int(token->type) << "\tvalue: " << token->value << endl;
 	}

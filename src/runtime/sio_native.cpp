@@ -262,5 +262,5 @@ void sio_native_testing(SIOContext* ctx)
 char* dummy(char* name, char* xxx)
 {
 	puts(name);
-	return "Hello";
+	return 0;//"Hello";
 }

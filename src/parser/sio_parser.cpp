@@ -31,7 +31,16 @@ bool SIOParser::parse(SIOContext* ctx)
 	if (state->root_node != nullptr)
 	{
 		state->root_node->print(ctx->get_dot_ast_debugger(), ctx);
-		set_clipboard(ctx->get_dot_ast_debugger()->str());
+		//set_clipboard(ctx->get_dot_ast_debugger()->str());
+	}
+
+	if (r)
+	{
+		ctx->get_logger()->log_success("Succesfully Compiled");
+	}
+	else
+	{
+		ctx->get_logger()->log_error("Error during compiling");
 	}
 
 	return r;
