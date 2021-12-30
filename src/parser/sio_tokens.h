@@ -7,89 +7,106 @@
 
 #pragma once
 
+#include <sio_code_insight.h>
+
+enum class SIOTokenCategory
+{
+	OTHER,
+	SYNTAX,
+	EXPR,
+	ARITH,
+	VALUE,
+	FLOW,
+	DECL,
+	ASSIGN,
+	IO_OUTPUT,
+};
+
+#define SIO_TOKENS \
+X(EMPTY, "Empty", SIOTokenCategory::OTHER) \
+X(IDENTIFIER, "IDENTIFIER", SIOTokenCategory::VALUE) \
+X(VALUE, "VALUE", SIOTokenCategory::VALUE) \
+X(DSTRING, "DSTRING", SIOTokenCategory::VALUE) \
+X(SSTRING, "SSTRING", SIOTokenCategory::VALUE) \
+X(DOUBLE, "DOUBLE", SIOTokenCategory::VALUE) \
+X(IF, "IF", SIOTokenCategory::FLOW) \
+X(ELSE, "ELSE", SIOTokenCategory::FLOW) \
+X(WHILE, "WHILE", SIOTokenCategory::FLOW) \
+X(VAR, "VAR", SIOTokenCategory::DECL) \
+X(IO_ADD, "IO_ADD", SIOTokenCategory::IO_OUTPUT) \
+X(DOT, "'.'", SIOTokenCategory::SYNTAX) \
+X(COMMA, "','", SIOTokenCategory::SYNTAX) \
+X(COLON, "':'", SIOTokenCategory::SYNTAX) \
+X(DCOLON, "'::'", SIOTokenCategory::SYNTAX) \
+X(SEMICOLON, "';'", SIOTokenCategory::SYNTAX) \
+X(LPAR, "'('", SIOTokenCategory::SYNTAX) \
+X(RPAR, "')'", SIOTokenCategory::SYNTAX) \
+X(LBR, "'['", SIOTokenCategory::SYNTAX) \
+X(RBR, "']'", SIOTokenCategory::SYNTAX) \
+X(LCURL, "'{'", SIOTokenCategory::SYNTAX) \
+X(RCURL, "'}'", SIOTokenCategory::SYNTAX) \
+X(SMALLER, "'<'", SIOTokenCategory::EXPR) \
+X(LARGER, "'>'", SIOTokenCategory::EXPR) \
+X(DOLLAR, "'$'", SIOTokenCategory::EXPR) \
+X(BSLASH, "'\'", SIOTokenCategory::SYNTAX) \
+X(HASH, "'#'", SIOTokenCategory::SYNTAX) \
+X(AND, "'&&'", SIOTokenCategory::EXPR) \
+X(OR, "'||'", SIOTokenCategory::EXPR) \
+X(MODULO, "'%'", SIOTokenCategory::EXPR) \
+X(NOT, "'!'", SIOTokenCategory::EXPR) \
+X(LOGIC_EQUAL, "'=='", SIOTokenCategory::EXPR) \
+X(LOGIC_UNEQUAL, "'<>'", SIOTokenCategory::EXPR) \
+X(LOGIC_GREATER_EQUAL, "'>='", SIOTokenCategory::EXPR) \
+X(LOGIC_SMALLER_EQUAL, "'<='", SIOTokenCategory::EXPR) \
+X(ADD, "'+'", SIOTokenCategory::ARITH) \
+X(MIN, "'-'", SIOTokenCategory::ARITH) \
+X(STAR, "'*'", SIOTokenCategory::ARITH) \
+X(SLASH, "'/'", SIOTokenCategory::ARITH) \
+X(ASSIGN, "'='", SIOTokenCategory::ASSIGN) \
+X(ASSIGN_ADD, "'+='", SIOTokenCategory::ASSIGN) \
+X(ASSIGN_MIN, "'-='", SIOTokenCategory::ASSIGN) \
+X(ASSIGN_STAR, "'*='", SIOTokenCategory::ASSIGN) \
+X(ASSIGN_SLASH, "'/='", SIOTokenCategory::ASSIGN) \
+X(INC, "'++'", SIOTokenCategory::ARITH) \
+X(DEC, "'--'", SIOTokenCategory::ARITH)
+
+#define X(e, name, cat) e,
 enum class SIOTokenType
 {
-	EMPTY,
-
-	// Symbol types
-	IDENTIFIER,
-	VALUE,
-	DSTRING, // double qouted string
-	SSTRING, // single qouted string
-	DOUBLE,
-
-	// Keywords
-	IF,
-	ELSE,
-	WHILE,
-	VAR,
-
-	// update
-	// block
-	// looping... while, for ...
-	// case
-	// func
-	// iter
-	// config
-	// proc
-	// import, use
-	// define -> datasource/io
-
-	// IO
-	IO_ADD,
-
-	// Signs
-	DOT,
-	COMMA,
-	COLON,
-	DCOLON,
-	SEMICOLON,
-	LPAR,
-	RPAR,
-	LBR,
-	RBR,
-	LCURL,
-	RCURL,
-	SMALLER,
-	LARGER,
-	DOLLAR,
-	BSLASH,
-	HASH,
-
-	// Logic operator
-	AND, // &&
-	OR, // ||
-	MODULO, // %
-	NOT, // !
-	LOGIC_EQUAL,
-	LOGIC_UNEQUAL,
-	LOGIC_GREATER_EQUAL,
-	LOGIC_SMALLER_EQUAL,
-
-	// Arithmetic operator
-	ADD,
-	MIN,
-	STAR,
-	SLASH,
-
-	// Assign
- 	ASSIGN,// xxx
-	ASSIGN_ADD,
-	ASSIGN_MIN,
-	ASSIGN_STAR,
-	ASSIGN_SLASH,
-
-	// Misc
-	INC,
-	DEC,
+	SIO_TOKENS
 };
+#undef X
+
+#define X(e, name, cat) name,
+static char const* sio_token_name[] =
+{
+	SIO_TOKENS
+};
+#undef X
+
+#define X(e, name, cat) cat,
+static SIOTokenCategory sio_token_category[]
+{
+	SIO_TOKENS
+};
+#undef X
+
+// update
+// block
+// looping... while, for ...
+// case
+// func
+// iter
+// config
+// proc
+// import, use
+// define -> datasource/io
 
 struct SIOToken
 {
 	SIOTokenType type;
 	uint64_t value;
-	
-	int start_ln, start_col, end_ln, end_col;
+	SIOLineInfoRange code_range;
 };
 
 //inline const char* token_type_str(const SIOTokenType& type)

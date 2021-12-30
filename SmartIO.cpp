@@ -14,7 +14,7 @@
 
 #include <parser/sio_tokenizer.h>
 #include <parser/sio_parser.h>
-#include <parser/dfa/sio_dfa_tree.h>
+#include <parser/sio_dfa_parser.h>
 #include <sio_context.h>
 #include <sio_define.h>
 #include <sio_memory.h>
@@ -34,9 +34,9 @@ int main()
 	//sio_native_testing(context);
 	//sio_vm_exec();
 
-	SIOContext* context = new SIOContext();
 	SIOLogger* logger = new SIOConsoleLogger();
-
+	SIOContext* context = new SIOContext(logger);
+	
 	string text;
 
 	cout << "Provided statement (exit, for closing): ";

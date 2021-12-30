@@ -35,6 +35,8 @@ SIOStream::SIOStream(string file)
 
 char SIOStream::get_char()
 {
+	apply_update();
+
 	if (my_str_index >= my_str.length())
 	{
 		return 0;
@@ -45,6 +47,8 @@ char SIOStream::get_char()
 
 char SIOStream::get_and_move_char()
 {
+	apply_update();
+
 	if (my_str_index >= my_str.length())
 	{
 		return 0;

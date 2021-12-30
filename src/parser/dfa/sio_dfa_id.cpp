@@ -72,7 +72,7 @@ bool tree_id_func(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, As
 		{
 			if (!tree_parse_token(ctx, walker, tree_expr_handler, state))
 			{
-				state.err = "Invalid parameter";
+				ctx.get_logger()->log_error("Invalid parameter");
 				return false;
 			}
 
@@ -81,7 +81,7 @@ bool tree_id_func(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, As
 			type = walker.pop_type();
 			if (type == SIOTokenType::EMPTY || (type != SIOTokenType::COMMA && type != SIOTokenType::RPAR))
 			{
-				state.err = "Function is incorrect formatted";
+				ctx.get_logger()->log_error("Function is incorrect formatted");
 				return false;
 			}
 		}
@@ -107,7 +107,7 @@ bool tree_id_array(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, A
 		{
 			if (!tree_parse_token(ctx, walker, tree_expr_handler, state))
 			{
-				state.err = "Invalid index";
+				ctx.get_logger()->log_error("Invalid index");
 				return false;
 			}
 
@@ -116,7 +116,7 @@ bool tree_id_array(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, A
 			type = walker.pop_type();
 			if (type == SIOTokenType::EMPTY || (type != SIOTokenType::COMMA && type != SIOTokenType::RBR))
 			{
-				state.err = "Array is incorrect formatted";
+				ctx.get_logger()->log_error("Array is incorrect formatted");
 				return false;
 			}
 		}
@@ -187,6 +187,7 @@ bool tree_id_handler(SIOTokenType& type, bool& eat, t_parse_tree_func& func, Ast
 		return true;
 	}
 
+	state.expected.push_back(SIOTokenType::IDENTIFIER);
 	return false;
 }
 

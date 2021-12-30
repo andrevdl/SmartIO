@@ -13,6 +13,7 @@
 
 #include <sio_stream.h>
 #include <parser/sio_tokens.h>
+#include <sio_code_insight.h>
 
 #include <sio_context.h>
 
@@ -40,7 +41,7 @@ private:
 	bool parse_str(char c, SIOTokenType type, char qoute);
 
 	bool push_token(SIOTokenType type);
-	bool push_token(SIOTokenType type, uint64_t value, int start_ln, int start_col);
+	bool push_token(SIOTokenType type, uint64_t value);
 
 	const bool translate_literal_to_token(const SIODataType type, SIOTokenType& token_type);
 protected:

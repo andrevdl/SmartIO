@@ -59,13 +59,14 @@ struct AstNodeState
 {
 #ifdef SIO_DEBUG
 	AstNodeDebugInfo debug_info;
+	vector<SIOTokenType> expected;
 #endif // SIO_DEBUG
 
 	SIOAst* root_node = nullptr;
 	SIOAst* curr_node = nullptr;
 	bool empty = true;
 
-	string err;
+	//string err;
 
 	void store_node(SIOAst* curr)
 	{

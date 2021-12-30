@@ -59,5 +59,10 @@ bool tree_stmt_handler(SIOTokenType& type, bool& eat, t_parse_tree_func& func, A
 		eat = true;
 		return true;
 	}
+
+	state.expected.push_back(SIOTokenType::VAR);
+	state.expected.push_back(SIOTokenType::IF);
+	state.expected.push_back(SIOTokenType::WHILE);
+	state.expected.push_back(SIOTokenType::IO_ADD);
 	return false;
 }

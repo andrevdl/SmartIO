@@ -9,8 +9,9 @@
 
 #include <unordered_map>
 #include <string>
-#include <debugger/sio_dot_debugger.h>
 
+#include <sio_log.h>
+#include <debugger/sio_dot_debugger.h>
 #include <sio_data.h>
 
 using namespace std;
@@ -18,6 +19,7 @@ using namespace std;
 class SIOContext
 {
 private:
+	SIOLogger* logger;
 #ifdef SIO_DEBUG
 	SIODotDebugger* dot_tree_debugger;
 #endif // SIO_DEBUG
@@ -34,8 +36,10 @@ private:
 
 	bool is_valid_str_index(size_t index);
 public:
-	SIOContext();
+	SIOContext(SIOLogger* logger);
 	~SIOContext();
+
+	SIOLogger* get_logger();
 
 	SIODataRef* store_str(string str);
 	bool load_str(uintptr_t ptr, string& str);
@@ -54,8 +58,6 @@ public:
 	bool is_data_marker(string str);
 
 	void optimize();
-
-	void store_parse_err(string err) {}; // placeholder for now => add position info ...
 
 #ifdef SIO_DEBUG
 	SIODotDebugger* get_dot_tree_debugger();

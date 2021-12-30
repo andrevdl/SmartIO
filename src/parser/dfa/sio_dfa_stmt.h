@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "sio_dfa_tree.h"
+#include <parser/sio_dfa_parser.h>
 
 bool tree_stmt_var(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state);
 bool tree_stmt_assign(SIOContext& ctx, SIOTokenType last, SIOTokenWalker& walker, AstNodeState& state);

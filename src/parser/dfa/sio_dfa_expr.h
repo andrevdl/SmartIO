@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "sio_dfa_tree.h"
+#include <parser/sio_dfa_parser.h>
 #include "sio_dfa_id.h"
 
 // visitors

@@ -38,11 +38,14 @@ bool SIOTokenizer::parse()
 	char c = get_and_move_char();
 	bool trap = false;
 
+	start_capture();
+
 	if (isspace(c))
 	{
 		return true;
-	} 
-	else if (compare_and_trap(c, 'a', trap))
+	}
+
+	if (compare_and_trap(c, 'a', trap))
 	{
 		c = get_and_move_char();
 		if (compare_and_trap(c, 'd', trap))
@@ -212,6 +215,12 @@ bool SIOTokenizer::parse()
 			return push_token(SIOTokenType::AND);
 		}
 
+		if (c == 0)
+		{
+			logger->log_error(ERROR_UNEXCEPTED_EOF, this);
+			return false;
+		}
+
 		logger->log_error(ERROR_INVALID_TOKEN, this);
 		return false;
 	}
@@ -348,9 +357,6 @@ bool SIOTokenizer::parse()
 
 bool SIOTokenizer::parse_non_keyword(char c)
 {
-	int ln = get_ln_pos();
-	int col = get_col_pos();
-
 	if (isdigit(c))
 	{
 		c = get_and_move_char();
@@ -379,7 +385,7 @@ bool SIOTokenizer::parse_non_keyword(char c)
 		uint64_t val = strtoll(get_str_buffer(), &end, 10);
 		if (errno == 0 && *end == 0)
 		{
-			return push_token(SIOTokenType::VALUE, val, ln, col);
+			return push_token(SIOTokenType::VALUE, val);
 		}
 
 		logger->log_error(ERROR_INVALID_NUMBER_FORMAT, this);
@@ -414,10 +420,10 @@ bool SIOTokenizer::parse_non_keyword(char c)
 		SIOTokenType token_type;
 		if (ref->type == SIODataRef::Type::LITERAL && translate_literal_to_token(data_type, token_type))
 		{
-			return push_token(token_type, (uintptr_t)ref, ln, col);
+			return push_token(token_type, (uintptr_t)ref);
 		}
 
-		return push_token(SIOTokenType::IDENTIFIER, (uintptr_t)ref, ln, col);
+		return push_token(SIOTokenType::IDENTIFIER, (uintptr_t)ref);
 	}
 
 	logger->log_error(ERROR_INVALID_TOKEN, this);
@@ -442,7 +448,7 @@ bool SIOTokenizer::parse_str(char c, SIOTokenType type, char qoute)
 	if (c == qoute)
 	{
 		rollback_str_buffer();
-		return push_token(type, (uintptr_t)ctx->store_str(get_str_buffer()), ln, col);
+		return push_token(type, (uintptr_t)ctx->store_str(get_str_buffer()));
 	}
 
 	logger->log_error(ERRROR_UNCLOSED_STRING, this);
@@ -451,19 +457,13 @@ bool SIOTokenizer::parse_str(char c, SIOTokenType type, char qoute)
 
 bool SIOTokenizer::push_token(SIOTokenType type)
 {
-	int ln = get_ln_pos();
-	int col = get_col_pos();
-
-	tokens.push_back(new SIOToken{ type, 0, ln, col, ln, col });
+	tokens.push_back(new SIOToken{ type, 0, stop_capture() });
 	return true;
 }
 
-bool SIOTokenizer::push_token(SIOTokenType type, uint64_t value, int start_ln, int start_col)
+bool SIOTokenizer::push_token(SIOTokenType type, uint64_t value)
 {
-	int ln = get_ln_pos();
-	int col = get_col_pos();
-
-	tokens.push_back(new SIOToken{ type, value, start_ln, start_col, ln, col });
+	tokens.push_back(new SIOToken{ type, value, stop_capture() });
 	return true;
 }
 

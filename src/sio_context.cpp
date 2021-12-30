@@ -17,8 +17,9 @@ bool SIOContext::is_valid_str_index(size_t index)
 	return index >= 0 && index < strings.size();
 }
 
-SIOContext::SIOContext()
+SIOContext::SIOContext(SIOLogger* logger)
 {
+	this->logger = logger;
 #ifdef SIO_DEBUG
 	dot_tree_debugger = new SIODotDebugger();
 #endif
@@ -56,6 +57,11 @@ SIOContext::~SIOContext()
 #endif;
 
 	// todo: destroy unordered_map -> refs
+}
+
+SIOLogger* SIOContext::get_logger()
+{
+	return logger;
 }
 
 SIODataRef* SIOContext::store_str(string str)

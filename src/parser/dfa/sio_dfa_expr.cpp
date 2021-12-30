@@ -357,6 +357,9 @@ bool tree_expr_factor2_handler(SIOTokenType& type, bool& eat, t_parse_tree_func&
 		func = tree_expr_factor_literal;
 		return true;
 	default:
+		state.expected.push_back(SIOTokenType::LPAR);
+		state.expected.push_back(SIOTokenType::VALUE);
+		state.expected.push_back(SIOTokenType::IDENTIFIER);
 		return false;
 	}
 }

@@ -97,7 +97,7 @@ void SIOConsoleLogger::log(ostream& stream, string message, int ln, int col, str
 		stream << ": ln " << ln;
 		if (col > 0)
 		{
-			stream << ", col " << ln;
+			stream << ", col " << col;
 		}
 	}
 
@@ -107,6 +107,8 @@ void SIOConsoleLogger::log(ostream& stream, string message, int ln, int col, str
 		stream << "\033[0m";
 	}
 	stream << endl;
+
+	//fmt::print(fg(fmt::color::aqua) | fmt::emphasis::underline, "{}: {}\n", 0, "x");
 }
 
 void SIOConsoleLogger::log_success(string message, int ln, int col)
@@ -132,37 +134,4 @@ void SIOConsoleLogger::log_warn(string message, int ln, int col)
 void SIOConsoleLogger::log_error(string message, int ln, int col)
 {
 	log(std::cerr, message, ln, col, CL_BRIGHT_COLOR_ERROR);
-}
-
-void SIOPosInfo::reset_pos_info()
-{
-	ln = 1;
-	col = 0;
-}
-
-void SIOPosInfo::set_pos_info(int ln, int col)
-{
-	this->ln = ln;
-	this->col = col;
-}
-
-void SIOPosInfo::update_ln_pos()
-{
-	++ln;
-	col = 0;
-}
-
-void SIOPosInfo::update_col_pos()
-{
-	++col;
-}
-
-const int SIOPosInfo::get_ln_pos()
-{
-	return ln;
-}
-
-const int SIOPosInfo::get_col_pos()
-{
-	return col;
 }

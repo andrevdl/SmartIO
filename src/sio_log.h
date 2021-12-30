@@ -10,26 +10,12 @@
 #include <string>
 #include <iostream>
 
+#include <sio_code_insight.h>
+
+#include "fmt/core.h"
+#include <fmt/color.h>
+
 using namespace std;
-
-class SIOPosInfo
-{
-private:
-	int ln = 1;
-	int col = 0;
-protected:
-	void reset_pos_info();
-	void set_pos_info(int ln, int col);
-
-	void update_ln_pos();
-	void update_col_pos();
-public:
-	SIOPosInfo() {}
-	SIOPosInfo(int ln, int col) : ln(ln), col(col) {}
-
-	const int get_ln_pos();
-	const int get_col_pos();
-};
 
 // Red console font color
 constexpr auto CL_COLOR_ERROR = "\x1B[31m";

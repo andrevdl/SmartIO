@@ -8,7 +8,7 @@
 #pragma once
 
 #include <string>
-#include <sio_log.h>
+#include <sio_code_insight.h>
 
 using namespace std;
 

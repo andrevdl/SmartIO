@@ -1,7 +1,4 @@
-﻿# CMakeList.txt : Top-level CMake project file, do global configuration
-# and include sub-projects here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.8)
 
 project ("SmartIO")
 
@@ -15,6 +12,7 @@ file(GLOB SmartIO_Src
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/parser/*.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/parser/ast/*.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/parser/dfa/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/parser/util/*.cpp"
 
 	#Compiler
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/compiler/*.cpp"
@@ -25,6 +23,8 @@ file(GLOB SmartIO_Src
 	#Runtime
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/runtime/*.cpp"
 )
+
+add_subdirectory(libs)
 
 # Register static lib libffi
 add_library(libffi STATIC IMPORTED)
@@ -37,6 +37,8 @@ target_include_directories(SmartIO PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 # Link libffi
 target_link_libraries(SmartIO libffi)
 target_include_directories(libffi INTERFACE ${CMAKE_CURRENT_LIST_DIR}/libs/libffi/includes)
+
+target_link_libraries(SmartIO fmt::fmt)
 
 # After build, copy the DDL to the output folder
 add_custom_command(TARGET SmartIO POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/libs/libffi/libffi-8.dll ${CMAKE_CURRENT_BINARY_DIR}/libffi-8.dll)
