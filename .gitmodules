@@ -1,0 +1,4 @@
+[submodule "libs/fmt"]
+    ignore = dirty
+    path = libs/fmt
+    url = https://github.com/fmtlib/fmt.git
