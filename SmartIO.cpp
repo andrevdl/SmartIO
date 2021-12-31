@@ -31,9 +31,28 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 
+	SIOArgParser parser("");
+	parser.add_switch("help", "", SIOArgKind::BOOL);
+	SIOArgSwitch* file_sw = parser.add_switch("file", "", SIOArgKind::FILE);
+	parser.add_switch("repl", "", SIOArgKind::BOOL, true, file_sw);
+
+	vector<SIOArgSwitch*> arg_err;
+	bool r = parser.parse(argc, argv, arg_err);
+
+	for (SIOArgSwitch* x : arg_err)
+	{
+		cout << x->name << endl;
+	}
+
+	arg_value v;	
+	if (parser.get_arg("repl", v))
+	{
+		cout << get<string>(v); // TODO: something goes wrong !!
+	}
 
 	return 0;
 
+	// --------------- Above code will be the new interface, everthing else will be moved --------------- //
 
 	SIOLogger* logger = new SIOConsoleLogger();
 	SIOContext* context = new SIOContext(logger);

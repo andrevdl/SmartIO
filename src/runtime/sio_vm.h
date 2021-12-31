@@ -120,12 +120,16 @@ void sio_vm_exec()
 	{
 	case OP_NOOP:
 		opcode = 3;
+		break;
 	case OP_ADD:
 		opcode = 2;
+		break;
 	case OP_SUB:
 		opcode = 1;
+		break;
 	case OP_CALL:
 		opcode = 1;
+		break;
 	//default:
 	//	break;
 	}
