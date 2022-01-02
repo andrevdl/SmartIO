@@ -18,9 +18,9 @@ SIOArgSwitch* SIOArgParser::find_switch_by_index(int index)
 	return nullptr;
 }
 
-bool SIOArgParser::find_arg_by_name(string name, arg_value val)
+bool SIOArgParser::find_arg_by_name(string name, sio_arg_value& val)
 {
-	unordered_map<string, arg_value>::const_iterator got = args.find(name);
+	unordered_map<string, sio_arg_value>::const_iterator got = args.find(name);
 	if (got != args.end())
 	{
 		val = got->second;
@@ -33,16 +33,28 @@ bool SIOArgParser::find_arg_by_name(string name, arg_value val)
 bool SIOArgParser::is_switch(char* name)
 {
 	char f = name[0];
-	return (style & SIOArgStyle::WINDOWS && f == '/') || (style & SIOArgStyle::UNIX && f == '-');
+	return (options & SIOArgOption::WINDOWS_STYLE && f == '/') || (options & SIOArgOption::UNIX_STYLE && f == '-');
 }
 
-bool SIOArgParser::store_arg(SIOArgSwitch* s, char* val, set<int>& filled, set<int>& missing)
+SIOArgState SIOArgParser::store_arg(SIOArgSwitch* s, char* val, set<int>& filled, set<int>& missing, set<int>& forbidden)
 {
-	bool r = true;
-
+	filled.insert(s->pos);
 	if (missing.contains(s->pos))
 	{
 		missing.erase(s->pos);
+	}
+
+	if (forbidden.contains(s->pos))
+	{
+		return SIOArgState::FORBIDDEN;
+	}
+
+	for (int f : s->exclude)
+	{
+		if (!forbidden.contains(f))
+		{
+			forbidden.insert(f);
+		}
 	}
 
 	for (int d : s->dep)
@@ -53,20 +65,66 @@ bool SIOArgParser::store_arg(SIOArgSwitch* s, char* val, set<int>& filled, set<i
 		}
 	}
 
-	// TODO: validate type => may change r
-	string x = val;
-	args.insert(make_pair(s->name, x)); // change value => use type for casting
+	SIOArgState r = SIOArgState::VALID;
+
+	string str = val;
+	sio_arg_value arg_val;
+
+	switch (s->kind)
+	{
+	case SIOArgKind::BOOL:
+		arg_val = ""; // TODO: add checks + convert ... | 1, 0, true, false, uppercase
+		r = SIOArgState::INCORRECT_VALUE;
+		break;
+	case SIOArgKind::INT:
+		arg_val = ""; // TODO: add checks + convert ...
+		r = SIOArgState::INCORRECT_VALUE;
+		break;
+	case SIOArgKind::UINT:
+		arg_val = ""; // TODO: add checks + convert ...
+		r = SIOArgState::INCORRECT_VALUE;
+		break;
+	case SIOArgKind::FLOAT:
+		arg_val = ""; // TODO: add checks + convert ...
+		r = SIOArgState::INCORRECT_VALUE;
+		break;
+	case SIOArgKind::STRING:
+		arg_val = val;
+		break;
+	case SIOArgKind::FILE:
+		arg_val = val;
+		break;
+	case SIOArgKind::FOLDER:
+		arg_val = val;
+		break;
+	case SIOArgKind::FILE_WITH_EXISTS_CHECK:
+		arg_val = val; // TODO: add checks ...
+		r = SIOArgState::INCORRECT_VALUE;
+		break;
+	case SIOArgKind::FOLDER_WITH_EXISTS_CHECK:
+		arg_val = val; // TODO: add checks ...
+		r = SIOArgState::INCORRECT_VALUE;
+		break;
+	default:
+		return SIOArgState::INCORRECT_VALUE;
+	}
+
+	if (r == SIOArgState::VALID && s->validator != nullptr && !s->validator(arg_val))
+	{
+		return SIOArgState::INCORRECT_VALUE;
+	}
+
+	if (r == SIOArgState::VALID)
+	{
+		args.insert(make_pair(s->name, arg_val));
+	}
 
 	return r;
 }
 
-SIOArgSwitch* SIOArgParser::_add_switch(string name, string desc, SIOArgKind kind, bool req)
+SIOArgSwitch* SIOArgParser::_add_switch(string name, string desc, SIOArgKind kind, bool req, t_sio_arg_validator validator)
 {
-	SIOArgSwitch* sw = new SIOArgSwitch();
-	sw->name = name;
-	sw->pos = max_index++;
-	sw->kind = kind;
-	sw->required = req;
+	SIOArgSwitch* sw = new SIOArgSwitch(name, desc, kind, req, max_index++, validator);
 
 	switch_by_name.insert(make_pair(name, sw));
 	switch_by_index.push_back(sw);
@@ -74,15 +132,15 @@ SIOArgSwitch* SIOArgParser::_add_switch(string name, string desc, SIOArgKind kin
 	return sw;
 }
 
-void SIOArgParser::add_switch_dep(SIOArgSwitch* s, SIOArgSwitch* dep)
-{
-	s->dep.insert(dep->pos);
-}
-
-SIOArgParser::SIOArgParser(string desc, int8_t style)
+SIOArgParser::SIOArgParser(string desc, int8_t options)
 {
 	this->desc = desc;
-	this->style = style;
+	this->options = options;
+
+	if (!(options & SIOArgOption::WINDOWS_STYLE) && !(options & SIOArgOption::UNIX_STYLE))
+	{
+		options |= SIOArgOption::WINDOWS_STYLE | SIOArgOption::UNIX_STYLE;
+	}
 }
 
 SIOArgParser::~SIOArgParser()
@@ -93,15 +151,16 @@ SIOArgParser::~SIOArgParser()
 	}
 }
 
-bool SIOArgParser::parse(int argc, char* argv[], vector<SIOArgSwitch*>& sw_missing, bool strict)
+bool SIOArgParser::parse(int argc, char* argv[], sio_arg_parse_result& result)
 {
 	args.clear();
-	sw_missing.clear();
+	result.clear();
 
 	int p = 0;
 
 	set<int> filled;
 	set<int> missing;
+	set<int> forbidden;
 
 	// Insert all required args into missing
 	for (SIOArgSwitch* rsw : switch_by_index)
@@ -121,41 +180,45 @@ bool SIOArgParser::parse(int argc, char* argv[], vector<SIOArgSwitch*>& sw_missi
 		if (is_switch(argv[i]))
 		{
 			s = find_switch_by_name(argv[i]);
+
+			// peek next one
+			if (i + 1 < argc && !is_switch(argv[i + 1]))
+			{
+				// Always eat the parameter, even if unkown
+				val = argv[i + 1];
+				++i;
+			}
 		}
 		else if (i < max_index)
 		{
 			s = find_switch_by_index(p);
+			val = argv[i];
 		}
 		else
 		{
 			// Nothing left for use
-			if (strict)
+			if (options & SIOArgOption::STRICT_MODE)
 			{
+				result.push_back(make_tuple(nullptr, SIOArgState::UNKNOWN));
 				return false;
 			}
 			break;
 		}
 
-		// peek next one
-		if (i + 1 < argc && !is_switch(argv[i + 1]))
-		{
-			// Always eat the parameter, even if unkown
-			val = argv[i + 1];
-			++i;
-		}
-
 		if (s != nullptr)
 		{
 			p = s->pos + 1;
-			filled.insert(s->pos);
 
-			if (!store_arg(s, val, filled, missing))
+			SIOArgState state = store_arg(s, val, filled, missing, forbidden);
+			if (state != SIOArgState::VALID)
 			{
+				result.push_back(make_tuple(s, state));
 				return false;
 			}
 		}
-		else if (strict)
+		else if (options & SIOArgOption::STRICT_MODE)
 		{
+			result.push_back(make_tuple(nullptr, SIOArgState::UNKNOWN));
 			return false;
 		}
 	}
@@ -164,16 +227,16 @@ bool SIOArgParser::parse(int argc, char* argv[], vector<SIOArgSwitch*>& sw_missi
 	{
 		for (int m : missing)
 		{
-			sw_missing.push_back(switch_by_index[m]);
+			result.push_back(make_tuple(switch_by_index[m], SIOArgState::MISSING));
 		}
 	}
 
 	return missing.size() == 0;
 }
 
-SIOArgSwitch* SIOArgParser::add_switch(string name, string desc, SIOArgKind kind, bool req)
+SIOArgSwitch* SIOArgParser::add_switch(string name, string desc, SIOArgKind kind, bool req, t_sio_arg_validator validator)
 {
-	return _add_switch(name, desc, kind, req);
+	return _add_switch(name, desc, kind, req, validator);
 }
 
 SIOArgSwitch* SIOArgParser::get_switch(string name)
@@ -189,11 +252,39 @@ SIOArgSwitch* SIOArgParser::get_switch(string name)
 
 bool SIOArgParser::has_arg(string name)
 {
-	arg_value temp;
+	sio_arg_value temp;
 	return find_arg_by_name(name, temp);
 }
 
-bool SIOArgParser::get_arg(string name, arg_value& value)
+bool SIOArgParser::try_get_arg(string name, sio_arg_value& value)
 {
 	return find_arg_by_name(name, value);
+}
+
+SIOArgSwitch::SIOArgSwitch(string name, string desc, SIOArgKind kind, bool req, int pos, t_sio_arg_validator validator) :
+	name(name), pos(pos), kind(kind), required(req), validator(validator)
+{
+	assert(name != "");
+}
+
+bool SIOArgSwitch::add_dependency(SIOArgSwitch* sw)
+{
+	if (pos == sw->pos || dep.contains(sw->pos) || exclude.contains(sw->pos))
+	{
+		return false;
+	}
+
+	dep.insert(sw->pos);
+	return true;
+}
+
+bool SIOArgSwitch::add_exclude(SIOArgSwitch* sw)
+{
+	if (pos == sw->pos || dep.contains(sw->pos) || exclude.contains(sw->pos))
+	{
+		return false;
+	}
+
+	exclude.insert(sw->pos);
+	return true;
 }

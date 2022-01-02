@@ -379,11 +379,8 @@ bool SIOTokenizer::parse_non_keyword(char c)
 			return false;
 		}
 
-		errno = 0;
-		char* end = 0;
-
-		uint64_t val = strtoll(get_str_buffer(), &end, 10);
-		if (errno == 0 && *end == 0)
+		uint64_t val;
+		if (try_str2uint64(get_str_buffer(), val))
 		{
 			return push_token(SIOTokenType::VALUE, val);
 		}

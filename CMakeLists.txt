@@ -17,7 +17,7 @@ file(GLOB SmartIO_Src
 
 	#Compiler
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/compiler/*.cpp"
-
+	
 	#Debugger
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/debugger/*.cpp"
 

@@ -30,25 +30,34 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-
 	SIOArgParser parser("");
-	parser.add_switch("help", "", SIOArgKind::BOOL);
-	SIOArgSwitch* file_sw = parser.add_switch("file", "", SIOArgKind::FILE);
-	parser.add_switch("repl", "", SIOArgKind::BOOL, true, file_sw);
 
-	vector<SIOArgSwitch*> arg_err;
+	parser.add_switch("help", "", SIOArgKind::BOOL);
+
+	SIOArgSwitch* file_sw = parser.add_switch("file", "", SIOArgKind::FILE);
+
+	SIOArgSwitch* repl_sw = parser.add_switch("repl", "", SIOArgKind::BOOL, true);
+	repl_sw->add_dependencies(file_sw);
+
+	sio_arg_parse_result arg_err;
 	bool r = parser.parse(argc, argv, arg_err);
 
-	for (SIOArgSwitch* x : arg_err)
+	for (tuple<SIOArgSwitch*, SIOArgState> x : arg_err)
 	{
-		cout << x->name << endl;
+		SIOArgSwitch* l_sw = get<0>(x);
+		if (l_sw != nullptr)
+		{
+			cout << l_sw->name << endl;
+		}
 	}
 
-	arg_value v;	
-	if (parser.get_arg("repl", v))
+	sio_arg_value v;
+	if (parser.try_get_arg("repl", v))
 	{
-		cout << get<string>(v); // TODO: something goes wrong !!
+		cout << get<string>(v);
 	}
+
+	cout << parser.get_arg<string>("repl", "xxx");
 
 	return 0;
 

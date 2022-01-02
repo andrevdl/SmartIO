@@ -14,6 +14,7 @@
 #include <sio_stream.h>
 #include <parser/sio_tokens.h>
 #include <sio_code_insight.h>
+#include <util/sio_utils.h>
 
 #include <sio_context.h>
 
