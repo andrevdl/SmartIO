@@ -47,6 +47,14 @@ enum class SIOArgState
 typedef variant<bool, int, unsigned int, float, string> sio_arg_value;
 typedef bool (*t_sio_arg_validator)(sio_arg_value val);
 
+bool str2bool_arg_value(const char* raw, sio_arg_value& val);
+bool str2int_arg_value(const char* raw, sio_arg_value& val);
+bool str2uint_arg_value(const char* raw, sio_arg_value& val);
+bool str2float_arg_value(const char* raw, sio_arg_value& val);
+bool str2str_arg_value(const char* raw, sio_arg_value& val);
+
+bool str2arg_value(SIOArgKind kind, const char* raw, sio_arg_value& val);
+
 class SIOArgParser;
 
 class SIOArgSwitch
@@ -81,7 +89,7 @@ enum SIOArgOption: int8_t
 	UNIX_STYLE = 1,
 	WINDOWS_STYLE = 2,
 	STRICT_MODE = 4,
-	CASE_SENSITIVE = 8
+	CASE_SENSITIVE = 8 // TODO: implement this feature => cap string support on ASCII characters
 };
 
 typedef vector<tuple<SIOArgSwitch*, SIOArgState>> sio_arg_parse_result;

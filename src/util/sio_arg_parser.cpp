@@ -68,45 +68,21 @@ SIOArgState SIOArgParser::store_arg(SIOArgSwitch* s, char* val, set<int>& filled
 	SIOArgState r = SIOArgState::VALID;
 
 	string str = val;
-	sio_arg_value arg_val;
+	bool b_val = false;
 
-	switch (s->kind)
+	sio_arg_value arg_val;
+	if (!str2arg_value(s->kind, val, arg_val))
 	{
-	case SIOArgKind::BOOL:
-		arg_val = ""; // TODO: add checks + convert ... | 1, 0, true, false, uppercase
-		r = SIOArgState::INCORRECT_VALUE;
-		break;
-	case SIOArgKind::INT:
-		arg_val = ""; // TODO: add checks + convert ...
-		r = SIOArgState::INCORRECT_VALUE;
-		break;
-	case SIOArgKind::UINT:
-		arg_val = ""; // TODO: add checks + convert ...
-		r = SIOArgState::INCORRECT_VALUE;
-		break;
-	case SIOArgKind::FLOAT:
-		arg_val = ""; // TODO: add checks + convert ...
-		r = SIOArgState::INCORRECT_VALUE;
-		break;
-	case SIOArgKind::STRING:
-		arg_val = val;
-		break;
-	case SIOArgKind::FILE:
-		arg_val = val;
-		break;
-	case SIOArgKind::FOLDER:
-		arg_val = val;
-		break;
-	case SIOArgKind::FILE_WITH_EXISTS_CHECK:
-		arg_val = val; // TODO: add checks ...
-		r = SIOArgState::INCORRECT_VALUE;
-		break;
-	case SIOArgKind::FOLDER_WITH_EXISTS_CHECK:
-		arg_val = val; // TODO: add checks ...
-		r = SIOArgState::INCORRECT_VALUE;
-		break;
-	default:
 		return SIOArgState::INCORRECT_VALUE;
+	}
+
+	if (s->kind == SIOArgKind::FILE_WITH_EXISTS_CHECK)
+	{
+		// TODO: xxx
+	}
+	else if (s->kind == SIOArgKind::FOLDER_WITH_EXISTS_CHECK)
+	{
+		// TODO: xxx
 	}
 
 	if (r == SIOArgState::VALID && s->validator != nullptr && !s->validator(arg_val))
@@ -287,4 +263,89 @@ bool SIOArgSwitch::add_exclude(SIOArgSwitch* sw)
 
 	exclude.insert(sw->pos);
 	return true;
+}
+
+bool str2bool_arg_value(const char* raw, sio_arg_value& val)
+{
+	bool b;
+	if (try_str2bool(raw, b))
+	{
+		val = b;
+		return true;
+	}
+
+	val = false;
+	return false;
+}
+
+bool str2int_arg_value(const char* raw, sio_arg_value& val)
+{
+	int i;
+	if (try_str2int64(raw, i))
+	{
+		val = i;
+		return true;
+	}
+
+	val = 0;
+	return false;
+}
+
+bool str2uint_arg_value(const char* raw, sio_arg_value& val)
+{
+	unsigned int i;
+	if (try_str2uint64(raw, i))
+	{
+		val = i;
+		return true;
+	}
+
+	val = 0;
+	return false;
+}
+
+bool str2float_arg_value(const char* raw, sio_arg_value& val)
+{
+	float f;
+	if (try_str2float(raw, f))
+	{
+		val = f;
+		return true;
+	}
+
+	val = 0;
+	return false;
+}
+
+bool str2str_arg_value(const char* raw, sio_arg_value& val)
+{
+	val = raw;
+	return true;
+}
+
+bool str2arg_value(SIOArgKind kind, const char* raw, sio_arg_value& val)
+{
+	switch (kind)
+	{
+	case SIOArgKind::BOOL:
+		return str2bool_arg_value(raw, val);
+	case SIOArgKind::INT:
+		return str2int_arg_value(raw, val);
+	case SIOArgKind::UINT:
+		return str2uint_arg_value(raw, val);
+	case SIOArgKind::FLOAT:
+		return str2float_arg_value(raw, val);
+	case SIOArgKind::STRING:
+		return str2str_arg_value(raw, val);
+	case SIOArgKind::FILE:
+		return str2str_arg_value(raw, val);
+	case SIOArgKind::FOLDER:
+		return str2str_arg_value(raw, val);
+	case SIOArgKind::FILE_WITH_EXISTS_CHECK:
+		return str2str_arg_value(raw, val);
+	case SIOArgKind::FOLDER_WITH_EXISTS_CHECK:
+		return str2str_arg_value(raw, val);
+	}
+
+	return false;
 }

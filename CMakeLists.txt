@@ -42,6 +42,9 @@ target_link_libraries(SmartIO libffi)
 target_include_directories(libffi INTERFACE ${CMAKE_CURRENT_LIST_DIR}/libs/libffi/includes)
 
 target_link_libraries(SmartIO fmt::fmt)
+#target_link_libraries(SmartIO stdc++fs) GNU/GCC (prior to 9.1) support for filesystem stuff -> argument parser use it
+#https://en.cppreference.com/w/cpp/filesystem#Notes
+#https://stackoverflow.com/questions/62468531/linking-to-stdcfs-with-c20-still-necessary-when-using-filesystem
 
 # After build, copy the DDL to the output folder
 add_custom_command(TARGET SmartIO POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/libs/libffi/libffi-8.dll ${CMAKE_CURRENT_BINARY_DIR}/libffi-8.dll)
