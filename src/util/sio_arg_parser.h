@@ -89,7 +89,7 @@ enum SIOArgOption: int8_t
 	UNIX_STYLE = 1,
 	WINDOWS_STYLE = 2,
 	STRICT_MODE = 4,
-	CASE_SENSITIVE = 8 // TODO: implement this feature => cap string support on ASCII characters
+	CASE_SENSITIVE = 8 // TODO: implement this feature => cap string support on ASCII characters | case_insensitive
 };
 
 typedef vector<tuple<SIOArgSwitch*, SIOArgState>> sio_arg_parse_result;
@@ -123,6 +123,7 @@ public:
 	bool parse(int argc, char* argv[], sio_arg_parse_result& result);
 
 	SIOArgSwitch* add_switch(string name, string desc, SIOArgKind kind, bool req = false, t_sio_arg_validator validator = nullptr);
+	SIOArgSwitch* add_or_get_switch(string name, string desc, SIOArgKind kind, bool req = false, t_sio_arg_validator validator = nullptr);
 
 	SIOArgSwitch* get_switch(string name);
 

@@ -12,97 +12,94 @@
 
 #include <iostream>
 
-#include <parser/sio_tokenizer.h>
-#include <parser/sio_parser.h>
-#include <parser/sio_dfa_parser.h>
-#include <sio_context.h>
-#include <sio_define.h>
-#include <sio_memory.h>
-
-#include <compiler/sio_ast_walker.h>
-
-#include <runtime/sio_vm.h>
-#include <runtime/sio_native.h>
-
-#include <util/sio_arg_parser.h>
+#include <cl/core.h>
+#include <cl/parse.h>
 
 using namespace std;
 
+constexpr int NO_TASK_FOUND = 1;
+constexpr int INVALID_PARAMETERS = 2;
+
 int main(int argc, char* argv[])
 {
-	SIOArgParser parser("");
+	SIOArgParser main_parser("");
+	main_parser.add_switch("task", "", SIOArgKind::STRING);
+	main_parser.add_switch("help", "", SIOArgKind::BOOL);
 
-	parser.add_switch("help", "", SIOArgKind::BOOL);
-
-	SIOArgSwitch* file_sw = parser.add_switch("file", "", SIOArgKind::FILE);
-
-	SIOArgSwitch* repl_sw = parser.add_switch("repl", "", SIOArgKind::BOOL, true);
-	repl_sw->add_dependencies(file_sw);
-
+	SIOCLModule* m = nullptr;
+	
 	sio_arg_parse_result arg_err;
-	bool r = parser.parse(argc, argv, arg_err);
-
-	for (tuple<SIOArgSwitch*, SIOArgState> x : arg_err)
+	if (main_parser.parse(argc, argv, arg_err))
 	{
-		SIOArgSwitch* l_sw = get<0>(x);
-		if (l_sw != nullptr)
+		string task;
+		if (main_parser.get_arg<bool>("help", false))
 		{
-			cout << l_sw->name << endl;
+			// show help page
+			return 0;
+		}
+		else if (main_parser.try_get_arg<string>("task", task))
+		{
+			m = new SIOCLParseModule(); // todo: load the correct tool => reg system or glob object...
 		}
 	}
-
-	sio_arg_value v;
-	if (parser.try_get_arg("repl", v))
+	else
 	{
-		cout << get<string>(v);
-	}
-
-	cout << parser.get_arg<string>("repl", "xxx");
-
-	return 0;
-
-	// --------------- Above code will be the new interface, everthing else will be moved --------------- //
-
-	SIOLogger* logger = new SIOConsoleLogger();
-	SIOContext* context = new SIOContext(logger);
-	
-	string text;
-
-	cout << "Provided statement (exit, for closing): ";
-	getline(cin, text);
-
-	while (text != "exit")
-	{
-		if (text != "")
+		for (tuple<SIOArgSwitch*, SIOArgState> x : arg_err) // -> abstract this code => same as common tools, make common error handling args
 		{
-			SIOTokenizer tokenizer(text, context, logger);
-			logger->set_section("Parsing");
-
-			if (tokenizer.tokenize())
+			SIOArgSwitch* l_sw = get<0>(x);
+			if (l_sw != nullptr)
 			{
-				//cout << tokenizer << endl; // dumps the parsed token list
-
-				SIOParser parser(&tokenizer, logger);
-				logger->set_section("Compiling");
-
-				if (parser.parse(context))
-				{
-#ifdef SIO_DEBUG
-					cout << endl << *(context->get_dot_tree_debugger());
-#endif // SIO_DEBUG
-				}
+				cout << l_sw->name << endl;
 			}
 		}
 
-		// clear console
-		//std::cout << "\x1B[2J\x1B[H";
-#ifdef SIO_DEBUG
-		context->get_dot_tree_debugger()->clear();
-#endif // SIO_DEBUG
-
-		cout << endl << "Provided statement (exit, for closing): ";
-		getline(cin, text);
+		return INVALID_PARAMETERS;
 	}
+
+	if (m != nullptr)
+	{
+		SIOArgParser module_arg_parser("");
+		m->init(module_arg_parser);
+
+		if (module_arg_parser.parse(argc, argv, arg_err))
+		{
+			m->execute(module_arg_parser);
+		}
+		else
+		{
+			for (tuple<SIOArgSwitch*, SIOArgState> x : arg_err)
+			{
+				SIOArgSwitch* l_sw = get<0>(x);
+				if (l_sw != nullptr)
+				{
+					cout << l_sw->name << endl;
+				}
+			}
+
+			return INVALID_PARAMETERS;
+		}
+	}
+	else
+	{
+		// show error ...
+		return NO_TASK_FOUND;
+	}
+
+	//SIOArgSwitch* file_sw = main_parser.add_switch("file", "", SIOArgKind::FILE);
+
+	//SIOArgSwitch* repl_sw = main_parser.add_switch("repl", "", SIOArgKind::BOOL, true);
+	//repl_sw->add_dependencies(file_sw);
+
+	//sio_arg_parse_result arg_err;
+	//bool r = main_parser.parse(argc, argv, arg_err);
+
+	//sio_arg_value v;
+	//if (main_parser.try_get_arg("repl", v))
+	//{
+	//	cout << get<string>(v);
+	//}
+
+	//cout << parser.get_arg<string>("repl", "xxx");
 
 	return 0;
 }

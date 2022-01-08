@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DSIO_DEBUG")
 file(GLOB SmartIO_Src
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/util/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/cl/*.cpp"
 
 	# Parser
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/parser/*.cpp"

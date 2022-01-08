@@ -215,6 +215,17 @@ SIOArgSwitch* SIOArgParser::add_switch(string name, string desc, SIOArgKind kind
 	return _add_switch(name, desc, kind, req, validator);
 }
 
+SIOArgSwitch* SIOArgParser::add_or_get_switch(string name, string desc, SIOArgKind kind, bool req, t_sio_arg_validator validator)
+{
+	SIOArgSwitch* sw = get_switch(name);
+	if (sw == nullptr)
+	{
+		return add_switch(name, desc, kind, req, validator);
+	}
+
+	return sw;
+}
+
 SIOArgSwitch* SIOArgParser::get_switch(string name)
 {
 	unordered_map<string, SIOArgSwitch*>::const_iterator got = switch_by_name.find(name);
@@ -281,7 +292,7 @@ bool str2bool_arg_value(const char* raw, sio_arg_value& val)
 bool str2int_arg_value(const char* raw, sio_arg_value& val)
 {
 	int i;
-	if (try_str2int64(raw, i))
+	if (try_str2int32(raw, i))
 	{
 		val = i;
 		return true;
@@ -294,7 +305,7 @@ bool str2int_arg_value(const char* raw, sio_arg_value& val)
 bool str2uint_arg_value(const char* raw, sio_arg_value& val)
 {
 	unsigned int i;
-	if (try_str2uint64(raw, i))
+	if (try_str2uint32(raw, i))
 	{
 		val = i;
 		return true;

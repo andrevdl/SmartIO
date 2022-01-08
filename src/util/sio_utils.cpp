@@ -1,12 +1,12 @@
 #include "sio_utils.h"
 
-uint64_t str2int64(const char* str, uint64_t def)
+uint64_t str2int64(const char* str, int64_t def)
 {
-	uint64_t val;
+	int64_t val;
 	return try_str2int64(str, val) ? val : def;
 }
 
-bool try_str2int64(const char* str, uint64_t& val)
+bool try_str2int64(const char* str, int64_t& val)
 {
 	errno = 0;
 	char* end = 0;
@@ -27,6 +27,51 @@ bool try_str2uint64(const char* str, uint64_t& val)
 	char* end = 0;
 
 	val = strtoull(str, &end, 10);
+	return errno == 0 && *end == 0;
+}
+
+uint32_t str2int32(const char* str, int32_t def)
+{
+	int32_t val;
+	return try_str2int32(str, val) ? val : def;
+}
+
+bool try_str2int32(const char* str, int32_t& val)
+{
+	errno = 0;
+	char* end = 0;
+
+	val = strtol(str, &end, 10);
+	return errno == 0 && *end == 0;
+}
+
+uint32_t str2uint32(const char* str, uint32_t def)
+{
+	uint32_t val;
+	return try_str2uint32(str, val) ? val : def;
+}
+
+bool try_str2uint32(const char* str, uint32_t& val)
+{
+	errno = 0;
+	char* end = 0;
+
+	val = strtoul(str, &end, 10);
+	return errno == 0 && *end == 0;
+}
+
+float str2float(const char* str, float def)
+{
+	float val;
+	return try_str2float(str, val) ? val : def;
+}
+
+bool try_str2float(const char* str, float& val)
+{
+	errno = 0;
+	char* end = 0;
+
+	val = strtof(str, &end);
 	return errno == 0 && *end == 0;
 }
 
